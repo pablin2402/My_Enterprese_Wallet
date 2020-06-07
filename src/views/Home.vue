@@ -6,7 +6,7 @@
       <v-layout row wrap>
         <v-flex xs12 sm6 md4 lg3 v-for="account in accounts" :key="account.id">
           <v-card class="mx-auto" max-width="330">
-            <router-link to="/Account">
+            <router-link to="/account">
               <v-card-title>
                 <div class="subheading">{{ account.accountname }}</div>
               </v-card-title>

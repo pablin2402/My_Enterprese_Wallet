@@ -1,23 +1,21 @@
 <template>
-  <div class="home">
-    <v-container class="my-10" grid-list-md>
-      <h1>Account</h1>
+  <div class="account">
+    <v-container class="my-10">
+      <h1>ACCOUNT</h1>
+      <h2>{{ accountname }}</h2>
+      <h3>{{ quantity }}</h3>
     </v-container>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Home",
+  name: "Account",
   components: {},
   data() {
     return {
-      accounts: [
-        { accountname: "Ahorros", quantity: "300" },
-        { accountname: "Universidad", quantity: "4300" },
-        { accountname: "Alquiler", quantity: "3300" },
-        { accountname: "Comida", quantity: "900" }
-      ]
+      accountname: this.$route.params.id.accountname,
+      quantity: this.$route.params.id.quantity
     };
   }
 };

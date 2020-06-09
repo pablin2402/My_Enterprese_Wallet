@@ -4,17 +4,18 @@
       <h1>My Enterprise Wallet</h1>
       <br />
       <v-layout row wrap>
-        <v-flex xs12 sm6 md4 lg3 v-for="account in accounts" :key="account.id">
+        <v-flex xs12 sm6 md4 lg3 v-for="(account,index) in accounts" :key="index">
           <v-card class="mx-auto" max-width="330">
             <router-link to="/CustomAccount">
               <v-card-title>
                 <div class="subheading">{{ account.accountname }}</div>
               </v-card-title>
             </router-link>
-
-            <v-card-text>
-              <div class="grey--text">{{ account.quantity }} Bs.</div>
-            </v-card-text>
+            <router-link :to="{ name: 'Account', params: { id : account } }">
+              <v-card-text>
+                <div class="grey--text">{{ account.quantity }} Bs.</div>
+              </v-card-text>
+            </router-link>
 
             <v-card-actions>
               <v-btn color="red" text>Eliminar</v-btn>
@@ -28,9 +29,12 @@
 </template>
 
 <script>
+//import Account from "./Account";
 export default {
   name: "Home",
-  components: {},
+  components: {
+    //Account
+  },
   data() {
     return {
       accounts: [

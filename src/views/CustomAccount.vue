@@ -17,28 +17,24 @@
           </v-btn>
         </v-flex>
         <v-flex md3>
-          <v-menu
-            ref="menu1"
-            :close-on-content-click="true"
-            transition="scale-transition"
-          >
+          <v-menu ref="menu1" :close-on-content-click="true">
             <template v-slot:activator="{ on }">
               <v-text-field
-                label="Date"
+                :value="selectedDate"
+                label="Filter by Date"
                 prepend-icon="mdi-calendar-range"
                 v-on="on"
               ></v-text-field>
             </template>
-            <v-date-picker no-title @input="menu1 = true"></v-date-picker>
+            <v-date-picker
+              no-title
+              @input="menu1 = true"
+              v-model="selectedDate"
+            ></v-date-picker>
           </v-menu>
         </v-flex>
         <v-flex md3>
-          <v-select
-            background-color="#F2F2F2"
-            :items="categories"
-            label="Filter by category"
-          >
-          </v-select>
+          <v-select :items="categories" label="Filter by category"> </v-select>
         </v-flex>
       </v-layout>
       <v-divider></v-divider>
@@ -92,7 +88,8 @@ export default {
         { name: "Desk", category: "transfer", amount: "123", type: "income" },
         { name: "Chair", category: "other", amount: "456", type: "expense" }
       ],
-      categories: ["Transfer", "Other"]
+      categories: ["Transfer", "Other"],
+      selectedDate: null
     };
   }
 };

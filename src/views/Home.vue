@@ -4,14 +4,21 @@
       <h1>My Enterprise Wallet</h1>
       <br />
       <v-layout row wrap>
-        <v-flex xs12 sm6 md4 lg3 v-for="(account,index) in accounts" :key="index">
+        <v-flex
+          xs12
+          sm6
+          md4
+          lg3
+          v-for="(account, index) in accounts"
+          :key="index"
+        >
           <v-card class="mx-auto" max-width="330">
-            <router-link to="/CustomAccount">
+            <router-link to="/customAccount">
               <v-card-title>
                 <div class="subheading">{{ account.accountname }}</div>
               </v-card-title>
             </router-link>
-            <router-link :to="{ name: 'Account', params: { id : account } }">
+            <router-link :to="{ name: 'Account', params: { id: account } }">
               <v-card-text>
                 <div class="grey--text">{{ account.quantity }} Bs.</div>
               </v-card-text>

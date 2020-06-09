@@ -5,7 +5,13 @@
       <br />
       <v-layout row justify-space-around>
         <v-flex md1 class="pt-6">
-          <v-btn small depressed color="#F2F2F2" width="100px">
+          <v-btn
+            small
+            depressed
+            color="#F2F2F2"
+            width="100px"
+            @click="dialog = true"
+          >
             <v-icon left small>mdi-plus-circle-outline</v-icon>
             <span class="caption text-lowercase">New</span>
           </v-btn>
@@ -72,6 +78,47 @@
         </v-layout>
       </v-card>
       <v-divider></v-divider>
+      <v-dialog v-model="dialog" persistent max-width="600px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Movimiento</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                  <v-radio-group v-model="movementType" row>
+                    <v-radio label="Income" value="income"></v-radio>
+                    <v-radio label="Expense" value="expense"></v-radio>
+                  </v-radio-group>
+                </v-col>
+                <v-col cols="12">
+                  <v-select
+                    v-model="category"
+                    :items="categories"
+                    label="Choose category"
+                  ></v-select>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="Name" required></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="Amount" required></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="dialog = false"
+              >Cancel</v-btn
+            >
+            <v-btn color="blue darken-1" text @click="dialog = false"
+              >Save</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-container>
   </div>
 </template>
@@ -89,7 +136,10 @@ export default {
         { name: "Chair", category: "other", amount: "456", type: "expense" }
       ],
       categories: ["Transfer", "Other"],
-      selectedDate: null
+      selectedDate: null,
+      dialog: false,
+      category: "",
+      movementType: ""
     };
   }
 };

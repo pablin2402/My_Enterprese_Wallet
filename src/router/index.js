@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import CustomAccount from "../views/CustomAccount.vue";
 import Account from "../views/Account.vue";
 
 Vue.use(VueRouter);
@@ -15,6 +16,11 @@ const routes = [
     path: "/account/:id",
     name: "Account",
     component: Account
+  },
+  {
+    path: "/CustomAccount",
+    name: "CustomAccount",
+    component: CustomAccount
   }
 ];
 

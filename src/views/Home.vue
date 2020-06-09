@@ -6,14 +6,16 @@
       <v-layout row wrap>
         <v-flex xs12 sm6 md4 lg3 v-for="(account,index) in accounts" :key="index">
           <v-card class="mx-auto" max-width="330">
-            <router-link :to="{ name: 'Account', params: { id : account } }">
+            <router-link to="/CustomAccount">
               <v-card-title>
                 <div class="subheading">{{ account.accountname }}</div>
               </v-card-title>
             </router-link>
-            <v-card-text>
-              <div class="grey--text">{{ account.quantity }} Bs.</div>
-            </v-card-text>
+            <router-link :to="{ name: 'Account', params: { id : account } }">
+              <v-card-text>
+                <div class="grey--text">{{ account.quantity }} Bs.</div>
+              </v-card-text>
+            </router-link>
 
             <v-card-actions>
               <v-btn color="red" text>Eliminar</v-btn>

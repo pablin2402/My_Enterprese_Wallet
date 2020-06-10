@@ -18,7 +18,7 @@ const routes = [
     component: Account
   },
   {
-    path: "/customAccount",
+    path: "/customAccount/:id",
     name: "CustomAccount",
     component: CustomAccount
   }

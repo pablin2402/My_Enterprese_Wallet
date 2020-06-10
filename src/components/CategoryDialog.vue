@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+
 export default {
   name: "CategoryDialog",
 
@@ -49,6 +51,39 @@ export default {
       categoryType: "",
       categoryName: ""
     };
+  },
+  computed: {
+    ...mapGetters(["getCategoryList"]),
+    categories() {
+      return this.getCategoryList;
+    }
+  },
+
+  methods: {
+    ...mapActions(["addCategory"]),
+    addNewCategory() {
+      if (this.categoryType === "") {
+        alert("You must choose any category type!");
+      } else if (this.categoryName === "") {
+        alert("You must fill the name field!");
+      } else {
+        this.addCategory({
+          code: this.selfGenerateCode(),
+          type: this.categoryType,
+          name: this.categoryName
+        });
+        this.dialog = false;
+        this.categoryName = "";
+        this.categoryType = "";
+      }
+    },
+    selfGenerateCode() {
+      const lastCategory = this.categories[
+        Object.keys(this.categories).length - 1
+      ];
+      const newNumber = parseInt(lastCategory.code.split("-")[1]) + 1;
+      return "cat-" + newNumber;
+    }
   }
 };
 </script>

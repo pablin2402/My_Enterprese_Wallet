@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import CustomAccount from "../views/CustomAccount.vue";
 import Account from "../views/Account.vue";
+import Categories from "../views/Categories.vue";
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,11 @@ const routes = [
     path: "/customAccount",
     name: "CustomAccount",
     component: CustomAccount
+  },
+  {
+    path: "/categories",
+    name: "Categories",
+    component: Categories
   }
 ];
 

@@ -22,6 +22,14 @@
             <span class="caption text-lowercase">Transfer</span>
           </v-btn>
         </v-flex>
+        <v-flex md1 class="pt-6">
+          <router-link to="/categories">
+            <v-btn small depressed color="#F2F2F2" width="100px">
+              <v-icon left small>mdi-clipboard-list-outline</v-icon>
+              <span class="caption text-lowercase">Categories</span>
+            </v-btn>
+          </router-link>
+        </v-flex>
         <v-flex md3>
           <v-menu ref="menu1" :close-on-content-click="true">
             <template v-slot:activator="{ on }">
@@ -95,7 +103,7 @@
                 <v-col cols="12">
                   <v-select
                     v-model="category"
-                    :items="categories"
+                    :items="filteredCategories"
                     label="Choose category"
                   ></v-select>
                 </v-col>
@@ -152,13 +160,34 @@ export default {
       const categoriesArray = [];
 
       for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
-        categoriesArray.push([this.categoriesObject[i].name]);
+        if (
+          categoriesArray.findIndex(
+            category => category == this.categoriesObject[i].name
+          ) === -1
+        ) {
+          categoriesArray.push([this.categoriesObject[i].name]);
+        }
       }
 
-      const uniqueCategories = new Set(categoriesArray);
-      const uniqueCategoriesArray = [...uniqueCategories];
-
-      return uniqueCategoriesArray;
+      return categoriesArray;
+    },
+    filteredCategories() {
+      let categoriesArray = [];
+      if (this.movementType === "income") {
+        for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
+          if (this.categoriesObject[i].type === "income") {
+            categoriesArray.push([this.categoriesObject[i].name]);
+          }
+        }
+      }
+      if (this.movementType === "expense") {
+        for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
+          if (this.categoriesObject[i].type === "expense") {
+            categoriesArray.push([this.categoriesObject[i].name]);
+          }
+        }
+      }
+      return categoriesArray;
     }
   }
 };

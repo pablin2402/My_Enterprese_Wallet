@@ -78,10 +78,8 @@ export default {
       }
     },
     selfGenerateCode() {
-      const lastCategory = this.categories[
-        Object.keys(this.categories).length - 1
-      ];
-      const newNumber = parseInt(lastCategory.code.split("-")[1]) + 1;
+      const { code } = this.categories[Object.keys(this.categories).length - 1];
+      const newNumber = parseInt(code.split("-")[1]) + 1;
       return "cat-" + newNumber;
     }
   }

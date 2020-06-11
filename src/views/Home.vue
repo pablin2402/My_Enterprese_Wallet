@@ -3,6 +3,19 @@
     <v-container class="my-10" grid-list-md>
       <h1>My Enterprise Wallet</h1>
       <br />
+      <v-flex md1 class="pt-6">
+        <v-btn
+          small
+          depressed
+          color="#F2F2F2"
+          width="100px"
+          @click="dialogCreate = true"
+        >
+          <v-icon left small>mdi-plus-circle-outline</v-icon>
+          <span class="caption text-lowercase">New Account</span>
+        </v-btn>
+      </v-flex>
+      <br />
       <v-layout row wrap>
         <v-flex
           xs12
@@ -35,10 +48,12 @@
                 @click="(dialogDelete = false), (dialogDelete = true)"
                 >Delete</v-btn
               >
-              <v-btn text @click="dialogUpdate = false">Update</v-btn>
+              <v-btn text @click="(dialogUpdate = false), (dialogUpdate = true)"
+                >Update</v-btn
+              >
             </v-card-actions>
           </v-card>
-          <v-dialog v-model="dialogDelete" persistent max-width="600px">
+          <v-dialog v-model="dialogDelete" persistent max-width="300px">
             <v-card>
               <v-card-title>
                 <span class="headline">Are you sure</span>
@@ -55,8 +70,66 @@
               >
             </v-card>
           </v-dialog>
+          <v-dialog v-model="dialogUpdate" persistent max-width="300px">
+            <v-card>
+              <v-card-title>
+                <span class="headline">Updating</span>
+              </v-card-title>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="newName"
+                  label="New name"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="dialogUpdate = false"
+                >Cancel</v-btn
+              >
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="
+                  (dialogUpdate = false),
+                    (account.accountname = newName),
+                    updaAccount(account)
+                "
+                >Change</v-btn
+              >
+            </v-card>
+          </v-dialog>
         </v-flex>
       </v-layout>
+      <v-dialog v-model="dialogCreate" persistent max-width="300px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Updating</span>
+          </v-card-title>
+          <v-col cols="12">
+            <v-text-field v-model="code" label="Code" required></v-text-field>
+            <v-text-field v-model="name" label="Name" required></v-text-field>
+            <v-text-field
+              v-model="quantity"
+              label="Quantity"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="dialogCreate = false"
+            >Cancel</v-btn
+          >
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="
+              (dialogCreate = false),
+                (account.accountname = newName),
+                creaAccount(account)
+            "
+            >Create</v-btn
+          >
+        </v-card>
+      </v-dialog>
     </v-container>
   </div>
 </template>
@@ -74,7 +147,11 @@ export default {
     return {
       dialogCreate: false,
       dialogDelete: false,
-      dialogUpdate: false
+      dialogUpdate: false,
+      newName: "",
+      code: "",
+      name: "",
+      quantity: ""
     };
   },
   computed: {
@@ -89,6 +166,19 @@ export default {
     ...mapActions(["deleteAccount"]),
     deleAccount(account) {
       this.deleteAccount(account);
+    },
+    updaAccount(account) {
+      this.updateAccount(account);
+    },
+    creaAccount() {
+      this.createAccount({
+        accounts: {
+          code: this.code,
+          accountname: this.name,
+          quantity: this.quantity,
+          info: []
+        }
+      });
     }
   }
 };

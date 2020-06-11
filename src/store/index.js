@@ -7,7 +7,7 @@ export default new Vuex.Store({
   state: {
     accounts: [
       {
-        code: "",
+        code: "a",
         accountname: "Saving",
         quantity: "300",
         info: [
@@ -28,7 +28,7 @@ export default new Vuex.Store({
         ]
       },
       {
-        code: "",
+        code: "b",
         accountname: "Clients",
         quantity: "300",
         info: [
@@ -49,7 +49,7 @@ export default new Vuex.Store({
         ]
       },
       {
-        code: "",
+        code: "c",
         accountname: "Enterprise",
         quantity: "300",
         info: [
@@ -90,13 +90,13 @@ export default new Vuex.Store({
       commit("mutateUpdate", updated);
     },
     createAccount({ commit }, accountCreated) {
-      commit("muteateCreateAccount", accountCreated);
+      commit("mutateCreateAccount", accountCreated);
     },
     updateAccount({ commit }, accountUpdated) {
-      commit("muteateUpdateAccount", accountUpdated);
+      commit("mutateUpdateAccount", accountUpdated);
     },
     deleteAccount({ commit }, accountDeleted) {
-      commit("muteateDeleteteAccount", accountDeleted);
+      commit("mutateDeleteAccount", accountDeleted);
     }
   },
   mutations: {
@@ -119,14 +119,12 @@ export default new Vuex.Store({
     mutateCreateAccount(state, account) {
       state.accounts.push(account);
     },
-    mutateUpdateAccount(state, account) {
+    mutateUpdateAccount(state, newAccount) {
       let upload;
-      state.accounts.accountname.find(
-        name => name.accountname === account.accountname
-      );
-      upload = state.accounts.info.indexOf(this.name);
-      if (this.name !== null) {
-        state.accounts.accountname.splice(upload, 1, account);
+      state.accounts.find(account => account.code === newAccount.code);
+      upload = state.accounts.indexOf(this.account);
+      if (this.account !== null) {
+        state.accounts.splice(upload, 1, newAccount);
       }
     },
     mutateDeleteAccount(state, account) {

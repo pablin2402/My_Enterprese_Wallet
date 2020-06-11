@@ -34,6 +34,14 @@
             ></Transfer>
           </v-btn>
         </v-flex>
+        <v-flex md1 class="pt-6">
+          <router-link to="/categories">
+            <v-btn small depressed color="#F2F2F2" width="100px">
+              <v-icon left small>mdi-clipboard-list-outline</v-icon>
+              <span class="caption text-lowercase">Categories</span>
+            </v-btn>
+          </router-link>
+        </v-flex>
         <v-flex md3>
           <v-menu ref="menu1" :close-on-content-click="true">
             <template v-slot:activator="{ on }">
@@ -107,7 +115,7 @@
                 <v-col cols="12">
                   <v-select
                     v-model="category"
-                    :items="categories"
+                    :items="filteredCategories"
                     label="Choose category"
                   ></v-select>
                 </v-col>
@@ -136,7 +144,9 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import Transfer from "../components/Transfer";
+
 export default {
   name: "CustomAccount",
   components: {
@@ -150,7 +160,6 @@ export default {
         { name: "Desk", category: "transfer", amount: "123", type: "income" },
         { name: "Chair", category: "other", amount: "456", type: "expense" }
       ],
-      categories: ["Transfer", "Other"],
       selectedDate: null,
       dialog: false,
       dialog2: false,
@@ -159,6 +168,45 @@ export default {
       accountname: this.$route.params.id.accountname,
       quantity: this.$route.params.id.quantity
     };
+  },
+  computed: {
+    ...mapGetters(["getCategoryList"]),
+    categoriesObject() {
+      return this.getCategoryList;
+    },
+    categories() {
+      const categoriesArray = [];
+
+      for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
+        if (
+          categoriesArray.findIndex(
+            category => category == this.categoriesObject[i].name
+          ) === -1
+        ) {
+          categoriesArray.push([this.categoriesObject[i].name]);
+        }
+      }
+
+      return categoriesArray;
+    },
+    filteredCategories() {
+      let categoriesArray = [];
+      if (this.movementType === "income") {
+        for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
+          if (this.categoriesObject[i].type === "income") {
+            categoriesArray.push([this.categoriesObject[i].name]);
+          }
+        }
+      }
+      if (this.movementType === "expense") {
+        for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
+          if (this.categoriesObject[i].type === "expense") {
+            categoriesArray.push([this.categoriesObject[i].name]);
+          }
+        }
+      }
+      return categoriesArray;
+    }
   }
 };
 </script>

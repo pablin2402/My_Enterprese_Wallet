@@ -10,9 +10,19 @@ export default new Vuex.Store({
       accountName: "Items",
       totalAmount: "",
       info: []
-    }
+    },
+    categories: [
+      { code: "cat-1", type: "income", name: "transfer" },
+      { code: "cat-2", type: "income", name: "other" },
+      { code: "cat-3", type: "expense", name: "transfer" },
+      { code: "cat-4", type: "expense", name: "other" }
+    ]
   },
+  
   actions: {
+    addCategory({ commit }, category) {
+      commit("mutateCategoryList", category);
+    },
     addTransfer({ commit }, transfer) {
       //student.accountName = student.accountName + "-inserted";
       commit("mutateTransfertList", transfer);
@@ -22,6 +32,7 @@ export default new Vuex.Store({
       commit("mutateUpdate", updated);
     }
   },
+  
   mutations: {
     mutateTransfertList(state, transfer) {
       state.accounts.info.push(transfer);
@@ -34,8 +45,15 @@ export default new Vuex.Store({
         state.accounts.info.splice(upload, 1, upTransfer);
       }
     },
+    mutateCategoryList(state, category) {
+      state.categories.push(category);
+    }
   },
+  
   getters: {
+    getCategoryList(state) {
+      return state.categories;
+    },
     getTransferList(state) {
       return state.accounts;
     },
@@ -43,5 +61,6 @@ export default new Vuex.Store({
       return state.accounts.info;
     }
   },
+  
   modules: {}
 });

@@ -124,6 +124,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "CustomAccount",
   components: {},
@@ -135,12 +137,29 @@ export default {
         { name: "Desk", category: "transfer", amount: "123", type: "income" },
         { name: "Chair", category: "other", amount: "456", type: "expense" }
       ],
-      categories: ["Transfer", "Other"],
       selectedDate: null,
       dialog: false,
       category: "",
       movementType: ""
     };
+  },
+  computed: {
+    ...mapGetters(["getCategoryList"]),
+    categoriesObject() {
+      return this.getCategoryList;
+    },
+    categories() {
+      const categoriesArray = [];
+
+      for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
+        categoriesArray.push([this.categoriesObject[i].name]);
+      }
+
+      const uniqueCategories = new Set(categoriesArray);
+      const uniqueCategoriesArray = [...uniqueCategories];
+
+      return uniqueCategoriesArray;
+    }
   }
 };
 </script>

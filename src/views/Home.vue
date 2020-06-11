@@ -29,10 +29,32 @@
             </router-link>
 
             <v-card-actions>
-              <v-btn color="red" text>Eliminar</v-btn>
-              <v-btn text>Actualizar</v-btn>
+              <v-btn
+                color="red"
+                text
+                @click="(dialogDelete = false), (dialogDelete = true)"
+                >Delete</v-btn
+              >
+              <v-btn text @click="dialogUpdate = false">Update</v-btn>
             </v-card-actions>
           </v-card>
+          <v-dialog v-model="dialogDelete" persistent max-width="600px">
+            <v-card>
+              <v-card-title>
+                <span class="headline">Are you sure</span>
+              </v-card-title>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="dialogDelete = false"
+                >Cancel</v-btn
+              >
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="(dialogDelete = false), deleAccount(account)"
+                >Yes</v-btn
+              >
+            </v-card>
+          </v-dialog>
         </v-flex>
       </v-layout>
     </v-container>
@@ -41,6 +63,8 @@
 
 <script>
 //import Account from "./Account";
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   name: "Home",
   components: {
@@ -48,13 +72,24 @@ export default {
   },
   data() {
     return {
-      accounts: [
-        { accountname: "Ahorros", quantity: "300" },
-        { accountname: "Universidad", quantity: "4300" },
-        { accountname: "Alquiler", quantity: "3300" },
-        { accountname: "Comida", quantity: "900" }
-      ]
+      dialogCreate: false,
+      dialogDelete: false,
+      dialogUpdate: false
     };
+  },
+  computed: {
+    ...mapGetters(["getAccounts"]),
+    accounts() {
+      return this.getAccounts;
+    }
+  },
+  methods: {
+    ...mapActions(["createAccount"]),
+    ...mapActions(["updateAccount"]),
+    ...mapActions(["deleteAccount"]),
+    deleAccount(account) {
+      this.deleteAccount(account);
+    }
   }
 };
 </script>

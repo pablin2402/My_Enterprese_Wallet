@@ -17,9 +17,21 @@
           </v-btn>
         </v-flex>
         <v-flex md1 class="pt-6">
-          <v-btn small depressed color="#F2F2F2" width="100px">
+          <v-btn
+            small
+            depressed
+            color="#F2F2F2"
+            width="100px"
+            @click.stop="dialog2 = true"
+          >
             <v-icon left small>mdi-bank-transfer</v-icon>
             <span class="caption text-lowercase">Transfer</span>
+            <Transfer
+              :visible="dialog2"
+              :account="accountname"
+              :amounts="quantity"
+              @close="dialog2 = false"
+            ></Transfer>
           </v-btn>
         </v-flex>
         <v-flex md3>
@@ -40,7 +52,7 @@
           </v-menu>
         </v-flex>
         <v-flex md3>
-          <v-select :items="categories" label="Filter by category"> </v-select>
+          <v-select :items="categories" label="Filter by category"></v-select>
         </v-flex>
       </v-layout>
       <v-divider></v-divider>
@@ -124,9 +136,12 @@
 </template>
 
 <script>
+import Transfer from "../components/Transfer";
 export default {
   name: "CustomAccount",
-  components: {},
+  components: {
+    Transfer
+  },
   data() {
     return {
       info: [
@@ -138,8 +153,11 @@ export default {
       categories: ["Transfer", "Other"],
       selectedDate: null,
       dialog: false,
+      dialog2: false,
       category: "",
-      movementType: ""
+      movementType: "",
+      accountname: this.$route.params.id.accountname,
+      quantity: this.$route.params.id.quantity
     };
   }
 };

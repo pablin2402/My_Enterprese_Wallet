@@ -14,14 +14,20 @@
         >
           <v-card class="mx-auto" max-width="330">
             <router-link
-              :to="{ name: 'CustomAccount', params: { id: account } }"
+              :to="{
+                name: 'CustomAccount',
+                params: { id: account.accountname }
+              }"
             >
               <v-card-title>
                 <div class="subheading">{{ account.accountname }}</div>
               </v-card-title>
             </router-link>
             <router-link
-              :to="{ name: 'CustomAccount', params: { id: account } }"
+              :to="{
+                name: 'CustomAccount',
+                params: { id: account.accountname }
+              }"
             >
               <v-card-text>
                 <div class="grey--text">{{ account.quantity }} Bs.</div>

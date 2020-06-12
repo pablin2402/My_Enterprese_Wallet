@@ -5,16 +5,7 @@
       <br />
       <v-layout row justify-space-around>
         <v-flex md1 class="pt-6">
-          <v-btn
-            small
-            depressed
-            color="#F2F2F2"
-            width="100px"
-            @click="dialog = true"
-          >
-            <v-icon left small>mdi-plus-circle-outline</v-icon>
-            <span class="caption text-lowercase">New</span>
-          </v-btn>
+          <Movement :accountIndex="accountIndex" />
         </v-flex>
         <v-flex md1 class="pt-6">
           <v-btn
@@ -98,47 +89,6 @@
         </v-layout>
       </v-card>
       <v-divider></v-divider>
-      <v-dialog v-model="dialog" persistent max-width="600px">
-        <v-card>
-          <v-card-title>
-            <span class="headline">Movimiento</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12">
-                  <v-radio-group v-model="movementType" row>
-                    <v-radio label="Income" value="income"></v-radio>
-                    <v-radio label="Expense" value="expense"></v-radio>
-                  </v-radio-group>
-                </v-col>
-                <v-col cols="12">
-                  <v-select
-                    v-model="category"
-                    :items="filteredCategories"
-                    label="Choose category"
-                  ></v-select>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field label="Name" required></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field label="Amount" required></v-text-field>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="dialog = false"
-              >Cancel</v-btn
-            >
-            <v-btn color="blue darken-1" text @click="dialog = false"
-              >Save</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
     </v-container>
   </div>
 </template>
@@ -146,31 +96,27 @@
 <script>
 import { mapGetters } from "vuex";
 import Transfer from "../components/Transfer";
+import Movement from "../components/Movement";
 
 export default {
   name: "CustomAccount",
   components: {
-    Transfer
+    Transfer,
+    Movement
   },
   data() {
     return {
-      info: [
-        { name: "Books", category: "transfer", amount: "234", type: "income" },
-        { name: "Class", category: "other", amount: "321", type: "expense" },
-        { name: "Desk", category: "transfer", amount: "123", type: "income" },
-        { name: "Chair", category: "other", amount: "456", type: "expense" }
-      ],
       selectedDate: null,
-      dialog: false,
       dialog2: false,
-      category: "",
-      movementType: "",
-      accountname: this.$route.params.id.accountname,
-      quantity: this.$route.params.id.quantity
+      accountname: "",
+      accountIndex: ""
     };
   },
   computed: {
-    ...mapGetters(["getCategoryList"]),
+    ...mapGetters(["getAccountList", "getCategoryList"]),
+    accounts() {
+      return this.getAccountList;
+    },
     categoriesObject() {
       return this.getCategoryList;
     },
@@ -189,24 +135,23 @@ export default {
 
       return categoriesArray;
     },
-    filteredCategories() {
-      let categoriesArray = [];
-      if (this.movementType === "income") {
-        for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
-          if (this.categoriesObject[i].type === "income") {
-            categoriesArray.push([this.categoriesObject[i].name]);
-          }
-        }
-      }
-      if (this.movementType === "expense") {
-        for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
-          if (this.categoriesObject[i].type === "expense") {
-            categoriesArray.push([this.categoriesObject[i].name]);
-          }
-        }
-      }
-      return categoriesArray;
+    info() {
+      return this.accounts[this.accountIndex].info;
     }
+  },
+  methods: {
+    findAccountIndex() {
+      this.accountname = this.$route.params.id;
+      this.accountIndex = this.accounts.findIndex(
+        account => account.name === this.accountname
+      );
+    }
+  },
+  created() {
+    this.findAccountIndex();
+  },
+  beforeCreate() {
+    // al
   }
 };
 </script>

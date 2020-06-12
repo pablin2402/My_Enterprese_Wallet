@@ -12,40 +12,68 @@ export default new Vuex.Store({
         totalAmount: "",
         info: [
           {
+            id: "0-0",
             name: "Ahorro1",
             category: "transfer",
-            amount: "234",
+            amount: "100000",
             type: "income"
           },
           {
+            id: "0-1",
             name: "Ahorro2",
             category: "other",
             amount: "321",
             type: "expense"
           },
           {
+            id: "0-2",
             name: "Ahorro3",
             category: "transfer",
             amount: "123",
             type: "income"
           },
-          { name: "Ahorro4", category: "other", amount: "456", type: "expense" }
+          {
+            id: "0-3",
+            name: "Ahorro4",
+            category: "other",
+            amount: "456",
+            type: "expense"
+          }
         ]
       },
       {
-        code: "",
+        code: "1-0",
         name: "Universidad",
         totalAmount: "",
         info: [
           {
+            id: "1-1",
             name: "Books",
             category: "transfer",
             amount: "234",
             type: "income"
           },
-          { name: "Class", category: "other", amount: "321", type: "expense" },
-          { name: "Desk", category: "transfer", amount: "123", type: "income" },
-          { name: "Chair", category: "other", amount: "456", type: "expense" }
+          {
+            id: "1-2",
+            name: "Salary",
+            category: "other",
+            amount: "10000",
+            type: "income"
+          },
+          {
+            id: "1-3",
+            name: "Desk",
+            category: "transfer",
+            amount: "123",
+            type: "income"
+          },
+          {
+            id: "1-4",
+            name: "Chair",
+            category: "other",
+            amount: "456",
+            type: "expense"
+          }
         ]
       },
       {
@@ -111,28 +139,30 @@ export default new Vuex.Store({
     },
     addMovement(state, newMovement) {
       state.accounts[newMovement.index].info.push({
+        id: newMovement.id,
         name: newMovement.name,
         category: newMovement.category,
         amount: newMovement.amount,
-        type: newMovement.amount
+        type: newMovement.type
       });
-    }
-    /*updateMovement(state, updatedMovement) {
-      state.accounts[updatedMovement.index].info.push({
+    },
+    updateMovement(state, updatedMovement) {
+      const foundAccountIndex = state.accounts[
+        updatedMovement.index
+      ].info.findIndex(account => account.id === updatedMovement.id);
+      state.accounts[updatedMovement.index].info[foundAccountIndex] = {
+        id: updatedMovement.id,
         name: updatedMovement.name,
         category: updatedMovement.category,
         amount: updatedMovement.amount,
-        type: updatedMovement.amount
-      });
+        type: updatedMovement.type
+      };
     },
-    deleteMovement(state, deeltedMovement) {
-      state.accounts[deeltedMovement.index].info.push({
-        name: deeltedMovement.name,
-        category: deeltedMovement.category,
-        amount: deeltedMovement.amount,
-        type: deeltedMovement.amount
-      });
-    }*/
+    deleteMovement(state, deletedMovement) {
+      state.accounts[deletedMovement.index].info = state.accounts[
+        deletedMovement.index
+      ].info.filter(account => account.id !== deletedMovement.id);
+    }
   },
 
   getters: {

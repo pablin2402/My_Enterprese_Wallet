@@ -1,11 +1,21 @@
 <template>
   <div class="customAccount">
     <v-container class="my-10" grid-list-md>
-      <h1>Custom Account</h1>
+      <h1>Custom Account: {{ accounts[accountIndex].name }}</h1>
+      <h2>Saldo {{ budget }} Bs.</h2>
       <br />
       <v-layout row justify-space-around>
         <v-flex md1 class="pt-6">
-          <Movement :accountIndex="accountIndex" />
+          <v-btn
+            small
+            depressed
+            color="#F2F2F2"
+            width="100px"
+            @click="sendData(selectedMovement, true)"
+          >
+            <v-icon left small>mdi-plus-circle-outline</v-icon>
+            <span class="caption text-lowercase">New</span>
+          </v-btn>
         </v-flex>
         <v-flex md1 class="pt-6">
           <v-btn
@@ -55,7 +65,7 @@
         </v-flex>
       </v-layout>
       <v-divider></v-divider>
-      <v-card color="#F2F2F2" flat v-for="data in info" :key="data.name">
+      <v-card color="#F2F2F2" flat v-for="data in info" :key="data.id">
         <v-layout
           row
           wrap
@@ -72,16 +82,16 @@
           </v-flex>
           <v-flex md2>
             <div class="caption grey--text">Amount</div>
-            <div>{{ data.amount }}</div>
+            <div>{{ data.amount }} Bs.</div>
           </v-flex>
           <v-flex md2>
-            <v-btn small>
+            <v-btn small :type="data.type" @click="deleteMovement(data)">
               <v-icon>mdi-trash-can-outline</v-icon>
               <span>Delete</span>
             </v-btn>
           </v-flex>
           <v-flex md2>
-            <v-btn small>
+            <v-btn small @click="sendData(data, false)">
               <v-icon>mdi-pencil-outline</v-icon>
               <span>Update</span>
             </v-btn>
@@ -89,6 +99,12 @@
         </v-layout>
       </v-card>
       <v-divider></v-divider>
+      <Movement
+        :dialog="dialog"
+        :selectedMovement="selectedMovement"
+        :newMovement="newMovement"
+        @close="dialog = false"
+      />
     </v-container>
   </div>
 </template>
@@ -107,9 +123,12 @@ export default {
   data() {
     return {
       selectedDate: null,
+      dialog: false,
       dialog2: false,
       accountname: "",
-      accountIndex: ""
+      accountIndex: "",
+      selectedMovement: {},
+      newMovement: false
     };
   },
   computed: {
@@ -137,6 +156,17 @@ export default {
     },
     info() {
       return this.accounts[this.accountIndex].info;
+    },
+    budget() {
+      let amount = 0;
+      this.info.forEach(movement => {
+        if (movement.type == "income") {
+          amount += parseInt(movement.amount);
+        } else {
+          amount -= parseInt(movement.amount);
+        }
+      });
+      return amount;
     }
   },
   methods: {
@@ -145,13 +175,29 @@ export default {
       this.accountIndex = this.accounts.findIndex(
         account => account.name === this.accountname
       );
+    },
+    sendData(selectedMovement, newMovement) {
+      this.selectedMovement = {
+        ...selectedMovement,
+        index: this.accountIndex
+      };
+      this.dialog = true;
+      this.newMovement = newMovement;
+    },
+    deleteMovement(updatedMovement) {
+      const response = confirm(
+        `Are you sure you want to delete ${updatedMovement.name}`
+      );
+      if (response) {
+        this.$store.dispatch("deleteMovement", {
+          ...updatedMovement,
+          index: this.accountIndex
+        });
+      }
     }
   },
   created() {
     this.findAccountIndex();
-  },
-  beforeCreate() {
-    // al
   }
 };
 </script>

@@ -172,9 +172,12 @@ export default {
     ...mapActions(["deleteAccount"]),
     deleAccount() {
       this.deleteAccount(this.code3);
+      this.code3 = "";
     },
     updaAccount() {
-      this.updateAccount(this.code2, this.newName);
+      this.updateAccount({ code: this.code2, name: this.newName });
+      this.code2 = "";
+      this.newName = "";
     },
     creaAccount() {
       this.createAccount({
@@ -183,6 +186,9 @@ export default {
         quantity: this.quantity,
         info: []
       });
+      this.code = "";
+      this.name = "";
+      this.quantity = "";
     }
   }
 };

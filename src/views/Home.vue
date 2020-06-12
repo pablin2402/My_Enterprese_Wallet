@@ -58,6 +58,11 @@
               <v-card-title>
                 <span class="headline">Are you sure</span>
               </v-card-title>
+              <v-text-field
+                v-model="code3"
+                label="Code"
+                required
+              ></v-text-field>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="dialogDelete = false"
                 >Cancel</v-btn
@@ -65,7 +70,7 @@
               <v-btn
                 color="blue darken-1"
                 text
-                @click="(dialogDelete = false), deleAccount(account)"
+                @click="(dialogDelete = false), deleAccount()"
                 >Yes</v-btn
               >
             </v-card>
@@ -75,6 +80,13 @@
               <v-card-title>
                 <span class="headline">Updating</span>
               </v-card-title>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="code2"
+                  label=" Code"
+                  required
+                ></v-text-field>
+              </v-col>
               <v-col cols="12">
                 <v-text-field
                   v-model="newName"
@@ -89,11 +101,7 @@
               <v-btn
                 color="blue darken-1"
                 text
-                @click="
-                  (dialogUpdate = false),
-                    (account.accountname = newName),
-                    updaAccount(account)
-                "
+                @click="(dialogUpdate = false), updaAccount()"
                 >Change</v-btn
               >
             </v-card>
@@ -103,7 +111,7 @@
       <v-dialog v-model="dialogCreate" persistent max-width="300px">
         <v-card>
           <v-card-title>
-            <span class="headline">Updating</span>
+            <span class="headline">New account</span>
           </v-card-title>
           <v-col cols="12">
             <v-text-field v-model="code" label="Code" required></v-text-field>
@@ -121,11 +129,7 @@
           <v-btn
             color="blue darken-1"
             text
-            @click="
-              (dialogCreate = false),
-                (account.accountname = newName),
-                creaAccount(account)
-            "
+            @click="(dialogCreate = false), creaAccount()"
             >Create</v-btn
           >
         </v-card>
@@ -151,7 +155,9 @@ export default {
       newName: "",
       code: "",
       name: "",
-      quantity: ""
+      quantity: "",
+      code2: "",
+      code3: ""
     };
   },
   computed: {
@@ -164,20 +170,18 @@ export default {
     ...mapActions(["createAccount"]),
     ...mapActions(["updateAccount"]),
     ...mapActions(["deleteAccount"]),
-    deleAccount(account) {
-      this.deleteAccount(account);
+    deleAccount() {
+      this.deleteAccount(this.code3);
     },
-    updaAccount(account) {
-      this.updateAccount(account);
+    updaAccount() {
+      this.updateAccount(this.code2, this.newName);
     },
     creaAccount() {
       this.createAccount({
-        accounts: {
-          code: this.code,
-          accountname: this.name,
-          quantity: this.quantity,
-          info: []
-        }
+        code: this.code,
+        accountname: this.name,
+        quantity: this.quantity,
+        info: []
       });
     }
   }

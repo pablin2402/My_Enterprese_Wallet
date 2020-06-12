@@ -119,16 +119,19 @@ export default new Vuex.Store({
     mutateCreateAccount(state, account) {
       state.accounts.push(account);
     },
-    mutateUpdateAccount(state, newAccount) {
+    mutateUpdateAccount(state, code, name) {
       let upload;
-      state.accounts.find(account => account.code === newAccount.code);
+      state.accounts.find(account => account.code === code);
       upload = state.accounts.indexOf(this.account);
       if (this.account !== null) {
-        state.accounts.splice(upload, 1, newAccount);
+        this.account.accountname = name;
+        state.accounts.splice(upload, 1, this.account);
       }
     },
-    mutateDeleteAccount(state, account) {
-      state.accounts = state.accounts.filter(account1 => account1 !== account);
+    mutateDeleteAccount(state, code) {
+      state.accounts = state.accounts.filter(
+        account1 => account1.code !== code
+      );
     }
   },
   getters: {

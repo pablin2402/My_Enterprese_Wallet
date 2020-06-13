@@ -15,7 +15,7 @@ export default new Vuex.Store({
             id: "0-0",
             name: "Ahorro1",
             category: "transfer",
-            amount: "100000",
+            amount: "1000",
             type: "income",
             date: "2020-06-11"
           },

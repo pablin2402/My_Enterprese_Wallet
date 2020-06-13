@@ -191,15 +191,22 @@ export default {
         this.newMovement = newMovement;
       }
     },
-    deleteMovement(updatedMovement) {
-      const response = confirm(
-        `Are you sure you want to delete ${updatedMovement.name}`
-      );
-      if (response) {
-        this.$store.dispatch("deleteMovement", {
-          ...updatedMovement,
-          index: this.accountIndex
-        });
+    deleteMovement(deletedMovement) {
+      if (
+        deletedMovement.type === "income" &&
+        this.budget - parseInt(deletedMovement.amount) < 0
+      ) {
+        alert("You cant delete this income");
+      } else {
+        const response = confirm(
+          `Are you sure you want to delete ${deletedMovement.name}`
+        );
+        if (response) {
+          this.$store.dispatch("deleteMovement", {
+            ...deletedMovement,
+            index: this.accountIndex
+          });
+        }
       }
     },
     updateBudget() {
@@ -219,7 +226,6 @@ export default {
   },
   created() {
     this.findAccountIndex();
-    this.budget();
   }
 };
 </script>

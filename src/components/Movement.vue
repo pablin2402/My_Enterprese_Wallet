@@ -31,8 +31,8 @@
               counter="20"
               :rules="[
                 required('Name'),
-                minLength('Amount', 5),
-                maxLength('Amount', 20)
+                minLength('Name', 5),
+                maxLength('Name', 20)
               ]"
             ></v-text-field>
 
@@ -46,7 +46,7 @@
                 minLength('Amount', 2),
                 maxLength('Amount', 9),
                 checkType('Amount'),
-                checkBudgetUpdate()
+                checkBudget()
               ]"
             ></v-text-field>
           </v-form>
@@ -75,35 +75,34 @@ export default {
   data() {
     return {
       valid: false,
-      mountedMovemntAmount: 0,
-      actionTag() {
-        return {};
-      },
+      initialMovementAmount: 0,
       required(propertyType) {
         return value =>
-          (value && value.length > 0) || `${propertyType} is required`;
+          (value && (value + "").length > 0) || `${propertyType} is required`;
       },
       minLength(propertyType, minLength) {
         return value =>
-          value.length >= minLength ||
+          (value + "").length >= minLength ||
           `${propertyType} must be at least ${minLength} characters`;
       },
       maxLength(propertyType, maxLength) {
         return value =>
-          value.length <= maxLength ||
+          (value + "").length <= maxLength ||
           `${propertyType} must be less than ${maxLength} characters`;
       },
       checkType(propertyType) {
         return value => value > 0 || `${propertyType} must be an number`;
       },
-      checkBudgetUpdate() {
-        const budget = this.accounts[this.selectedMovement.index].totalAmount;
-        //debugger;
+      checkBudget() {
+        const budget = !this.dialog
+          ? 0
+          : this.accounts[this.selectedMovement.index].totalAmount;
         return value =>
           this.selectedMovement.type === "income" ||
-          //(!this.newMovement && parseInt(value) <= budget + parseInt(value)) ||
           value <= budget ||
-          `Expense must be less than the remaining budget ${budget}`;
+          (!this.newMovement && value <= budget + this.initialMovementAmount) ||
+          `Expense must be less than the remaining budget: ${budget +
+            this.initialMovementAmount}`;
       }
     };
   },
@@ -169,15 +168,17 @@ export default {
   },
   methods: {
     dispatchAction() {
-      if (this.newMovement) {
-        this.generateNewId();
-        this.getCurrentDate();
-        this.$store.dispatch("addMovement", this.selectedMovement);
-      } else {
-        this.$store.dispatch("updateMovement", this.selectedMovement);
-        this.updateBudget();
+      if (this.$refs.form.validate()) {
+        if (this.newMovement) {
+          this.generateNewId();
+          this.getCurrentDate();
+          this.$store.dispatch("addMovement", this.selectedMovement);
+        } else {
+          this.$store.dispatch("updateMovement", this.selectedMovement);
+          this.updateBudget();
+        }
+        this.reset();
       }
-      this.reset();
     },
     generateNewId() {
       const numberOfMovements = this.accounts[this.selectedMovement.index].info
@@ -211,9 +212,17 @@ export default {
       });
     },
     reset() {
-      this.dialog = false;
       this.$refs.form.reset();
       this.$emit("close");
+    }
+  },
+  watch: {
+    dialog(newValue) {
+      if (newValue && !this.newMovement) {
+        this.initialMovementAmount = parseInt(this.selectedMovement.amount);
+      } else {
+        this.initialMovementAmount = 0;
+      }
     }
   }
 };

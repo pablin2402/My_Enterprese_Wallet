@@ -46,7 +46,8 @@
                 minLength('Amount', 2),
                 maxLength('Amount', 9),
                 checkType('Amount'),
-                checkBudget()
+                checkBudgetExpense(),
+                checkBudgetIncome()
               ]"
             ></v-text-field>
           </v-form>
@@ -93,7 +94,7 @@ export default {
       checkType(propertyType) {
         return value => value > 0 || `${propertyType} must be an number`;
       },
-      checkBudget() {
+      checkBudgetExpense() {
         const budget = !this.dialog
           ? 0
           : this.accounts[this.selectedMovement.index].totalAmount;
@@ -103,6 +104,16 @@ export default {
           (!this.newMovement && value <= budget + this.initialMovementAmount) ||
           `Expense must be less than the remaining budget: ${budget +
             this.initialMovementAmount}`;
+      },
+      checkBudgetIncome() {
+        const budget = !this.dialog
+          ? 0
+          : this.accounts[this.selectedMovement.index].totalAmount;
+        return value =>
+          this.selectedMovement.type === "expense" ||
+          this.newMovement ||
+          value >= this.initialMovementAmount - budget ||
+          `Income must be at lest: ${this.initialMovementAmount - budget}`;
       }
     };
   },
@@ -183,10 +194,13 @@ export default {
     generateNewId() {
       const numberOfMovements = this.accounts[this.selectedMovement.index].info
         .length;
-      const lastId = this.accounts[this.selectedMovement.index].info[
-        numberOfMovements - 1
-      ].id;
-      const newId = parseInt(lastId.split("-")[1]) + 1;
+      let newId = 0;
+      if (numberOfMovements > 0) {
+        const lastId = this.accounts[this.selectedMovement.index].info[
+          numberOfMovements - 1
+        ].id;
+        newId = parseInt(lastId.split("-")[1]) + 1;
+      }
       this.selectedMovement.id = `${this.selectedMovement.index}-${newId}`;
     },
     getCurrentDate() {

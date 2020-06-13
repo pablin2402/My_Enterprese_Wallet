@@ -7,7 +7,7 @@ export default new Vuex.Store({
   state: {
     accounts: [
       {
-        code: "a",
+        code: "account-1",
         accountname: "Saving",
         quantity: "300",
         info: [
@@ -28,7 +28,7 @@ export default new Vuex.Store({
         ]
       },
       {
-        code: "b",
+        code: "account-2",
         accountname: "Clients",
         quantity: "300",
         info: [
@@ -49,7 +49,7 @@ export default new Vuex.Store({
         ]
       },
       {
-        code: "c",
+        code: "account-3",
         accountname: "Enterprise",
         quantity: "300",
         info: [

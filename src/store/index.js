@@ -180,6 +180,8 @@ export default new Vuex.Store({
         amount: newMovement.amount,
         type: newMovement.type,
         date: newMovement.date
+
+        //PABLO TRANSFER
       });
     },
     updateMovement(state, updatedMovement) {

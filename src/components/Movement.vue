@@ -60,8 +60,7 @@
           text
           @click="dispatchAction"
           :disabled="!valid"
-          >{{ newMovement ? "SAVE" : "UPDATE" }}</v-btn
-        >
+        >{{ newMovement ? "SAVE" : "UPDATE" }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

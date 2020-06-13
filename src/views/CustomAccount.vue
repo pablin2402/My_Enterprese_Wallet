@@ -23,15 +23,10 @@
             depressed
             color="#F2F2F2"
             width="100px"
-            @click.stop="dialog2 = true"
+            @click="sendDataTransfer(selectedMovement, true)"
           >
             <v-icon left small>mdi-bank-transfer</v-icon>
             <span class="caption text-lowercase">Transfer</span>
-            <Transfer
-              :visible="dialog2"
-              :account="accountname"
-              @close="dialog2 = false"
-            ></Transfer>
           </v-btn>
         </v-flex>
         <v-flex md1 class="pt-6">
@@ -52,11 +47,7 @@
                 v-on="on"
               ></v-text-field>
             </template>
-            <v-date-picker
-              no-title
-              @input="menu1 = true"
-              v-model="selectedDate"
-            ></v-date-picker>
+            <v-date-picker no-title @input="menu1 = true" v-model="selectedDate"></v-date-picker>
           </v-menu>
         </v-flex>
         <v-flex md3>
@@ -65,12 +56,7 @@
       </v-layout>
       <v-divider></v-divider>
       <v-card color="#F2F2F2" flat v-for="data in info" :key="data.id">
-        <v-layout
-          row
-          wrap
-          justify-space-around
-          :class="`pa-3 data ${data.type}`"
-        >
+        <v-layout row wrap justify-space-around :class="`pa-3 data ${data.type}`">
           <v-flex md3>
             <div class="caption grey--text">Name</div>
             <div>{{ data.name }}</div>
@@ -98,6 +84,13 @@
         </v-layout>
       </v-card>
       <v-divider></v-divider>
+      <Transfer
+        :dialog2="dialog2 "
+        :selectedMovement="selectedMovement"
+        :newMovement="newMovement"
+        @close="dialog2 = false"
+      ></Transfer>
+
       <Movement
         :dialog="dialog"
         :selectedMovement="selectedMovement"
@@ -178,6 +171,14 @@ export default {
       this.accountIndex = this.accounts.findIndex(
         account => account.name === this.accountname
       );
+    },
+    sendDataTransfer(selectedMovement, newMovement) {
+      this.selectedMovement = {
+        ...selectedMovement,
+        index: this.accountIndex
+      };
+      this.dialog2 = true;
+      this.newMovement = newMovement;
     },
     sendData(selectedMovement, newMovement) {
       if (!newMovement && selectedMovement.category === "transfer") {

@@ -1,66 +1,61 @@
 <template>
   <v-dialog v-model="dialog2" persistent max-width="600px">
-    <v-form ref="form" v-model="valid" lazy-validation>
-      <v-card>
-        <v-card-title>
-          <span class="headline">Transferencia</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
+    <v-card>
+      <v-card-title>
+        <span class="headline">Transferencia</span>
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-form ref="form" v-model="valid" lazy-validation>
             <v-row>
               <v-col cols="12">
-                <h3>Cuenta Debito</h3>
+                <h3>Cuenta de Débito</h3>
                 <v-divider></v-divider>
-
-                <v-text-field label="Cuenta de débito" v-model="nameAccount">{{
-                  account
-                }}</v-text-field>
-
-                <p class="font-weight-bold">Monto Total: {{ amounts }}</p>
-
-                <br />
-                <div :key="index" v-for="(transfer, index) in details">
-                  <ul>
-                    <li>DESDE: {{ transfer.accountname }}</li>
-
-                    <li>DESCRIPCION: {{ transfer.description }}</li>
-                    <li>Monto:{{ transfer.amount }}</li>
-                    <li>FECHA: {{ transfer.date }}</li>
-
-                    <li>PARA: {{ transfer.to_account }}</li>
-                  </ul>
-                </div>
+                <!--cuenta dueño-->
               </v-col>
               <v-col cols="12">
-                <p class="font-weight-bold">Categoria: Transfer</p>
+                <v-select
+                  v-model="selectedMovement.name"
+                  :items="getAccounts"
+                  :rules="[v => !!v || 'Account is required']"
+                  label="Account"
+                  required
+                ></v-select>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="selectedMovement.amount"
+                  autocomplete="off"
+                  label="Amount"
+                  counter="5"
+                  :rules="amountRules"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <v-select
+                  v-model="selectedMovement.category"
+                  :items="getCategories"
+                  :rules="[v => !!v || 'Category is required']"
+                  label="Category"
+                  required
+                ></v-select>
               </v-col>
               <v-col cols="12">
                 <h3>Cuenta Abonado</h3>
                 <v-divider></v-divider>
                 <br />
 
-                <!--v-select
-                  v-model="select"
-                  :items="i"
+                <v-select
+                  v-model="to_account"
+                  :items="getAccounts"
                   :rules="[v => !!v || 'Account is required']"
                   label="Account"
                   required
-                ></v-select-->
-                <v-text-field
-                  v-model="to_account"
-                  label="Destination"
-                  required
-                ></v-text-field>
+                ></v-select>
+                <v-text-field v-model="to_account" label="Destination" required></v-text-field>
               </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="description"
-                  :counter="10"
-                  :rules="descriptionRules"
-                  label="Description"
-                  required
-                ></v-text-field>
-              </v-col>
+
               <v-col cols="12">
                 <v-text-field
                   v-model="amount"
@@ -72,27 +67,23 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
+          </v-form>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
 
-          <v-btn color="warning" text @click="dialog2 = false">Cancel</v-btn>
-          <v-btn color="error" text @click="reset">Clear</v-btn>
+        <v-btn color="warning" text @click="reset">Cancel</v-btn>
+        <v-btn color="error" text @click="reset">Clear</v-btn>
 
-          <v-btn :disabled="!valid" color="sucess" @click="submitTransfer"
-            >Save</v-btn
-          >
-          <v-btn color="sucess" @click="modifyTransfer">Actualizae</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-form>
+        <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer">Save</v-btn>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
-import moment from "moment";
+import { mapGetters } from "vuex";
 
 export default {
   name: "Transfer",
@@ -100,78 +91,113 @@ export default {
   data() {
     return {
       valid: true,
+      id: "",
+      category: "",
       amount: "",
-      description: "",
-      nameAccount: "",
+      type: "",
+      name: "", //nameaccount
+      date: "",
       to_account: "",
-      descriptionRules: [
-        v => !!v || "Description is required",
-        v =>
-          (v && v.length <= 10) || "Description must be less than 10 characters"
-      ],
+      type_account: "",
 
       amountRules: [
         v => !!v || "Amount is required",
-        v => (v && v.length < 5) || "Amount must be less than 10000$",
-        v =>
+        v => (v && v.length < 5) || "Amount must be less than 10000$"
+        /* v =>
           (v && v <= this.amounts) ||
-          " You cannot deposit more money than you have in your account"
+          " You cannot deposit more money than you have in your account"*/
       ]
     };
   },
   methods: {
-    reset() {
-      this.$refs.form.reset();
-    },
-    ...mapActions(["addTransfer"]),
-    ...mapActions(["updateTransfer"]),
-
     //addStudent
     submitTransfer() {
       if (this.$refs.form.validate()) {
-        this.addTransfer({
-          description: this.description,
-          amount: this.amount,
-          date: this.Date,
-          accountname: this.nameAccount,
-          to_account: this.to_account
-        });
+        this.generateNewId();
+        this.getCurrentDate();
+        this.getOutcome();
+        this.$store.dispatch("addMovement", this.selectedMovement);
       }
     },
-    modifyTransfer() {
-      this.updateTransfer({
-        description: this.description,
-        amount: this.amount,
-        date: this.Date,
-        accountname: this.nameAccount
-      });
+    generateNewId() {
+      let id = +new Date() + "-" + Math.floor(Math.random() * 1000);
+
+      this.selectedMovement.id = "TRANSFER " + "-" + id;
+    },
+    getOutcome() {
+      const outcome = "expense";
+
+      this.selectedMovement.type = `${outcome}`;
+    },
+    getCurrentDate() {
+      let today = new Date();
+      const dd = String(today.getDate()).padStart(2, "0");
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const yyyy = today.getFullYear();
+
+      this.selectedMovement.date = `${yyyy}-${mm}-${dd}`;
+    },
+
+    reset() {
+      this.$refs.form.reset();
+      this.$emit("close");
     }
   },
-  props: ["visible", "account", "amounts"],
-  computed: {
+  props: {
     dialog2: {
-      get() {
-        return this.visible;
-      },
-      set(value) {
-        if (!value) {
-          this.$emit("close");
-        }
+      type: Boolean,
+      default: false
+    },
+    selectedMovement: {
+      type: Object,
+      default: function() {
+        return {
+          id: "",
+          name: "",
+          category: "",
+          amount: "",
+          type: "",
+          date: "",
+          index: ""
+        };
       }
     },
-    ...mapGetters(["ListDetails"]),
-    ...mapGetters(["getAccountList"]),
+    newMovement: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    ...mapGetters(["getAccountList", "getCategoryList"]),
 
-    tr() {
+    accountsObject() {
       return this.getAccountList;
     },
-    details() {
-      return this.ListDetails;
+    categoryObject() {
+      return this.getCategoryList;
     },
-    Date() {
-      let date = moment();
-      return date;
+    getAccounts() {
+      let accountsArray = [];
+      for (let i = 0; i < this.accountsObject.length; i++) {
+        accountsArray.push(this.accountsObject[i].name);
+      }
+      return accountsArray;
+    },
+
+    getCategories() {
+      let categoriesArray = [];
+      for (let i = 0; i < this.categoryObject.length; i++) {
+        if (this.categoryObject[i].name === "transfer") {
+          categoriesArray.push(this.categoryObject[i].name);
+        }
+      }
+      return categoriesArray;
     }
   }
 };
 </script>
+<style scoped>
+h3 {
+  color: green;
+}
+</style>

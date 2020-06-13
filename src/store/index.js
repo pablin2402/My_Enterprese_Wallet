@@ -9,7 +9,7 @@ export default new Vuex.Store({
       {
         code: "account-1",
         name: "Saving",
-        totalAmount: "0",
+        totalAmount: 0,
         info: [
           {
             id: "0-0",
@@ -48,7 +48,7 @@ export default new Vuex.Store({
       {
         code: "account-2",
         name: "Clients",
-        totalAmount: "0",
+        totalAmount: 0,
         info: [
           {
             id: "1-0",
@@ -87,7 +87,7 @@ export default new Vuex.Store({
       {
         code: "account-3",
         name: "Enterprise",
-        totalAmount: "0",
+        totalAmount: 0,
         info: []
       }
     ],

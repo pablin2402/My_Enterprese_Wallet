@@ -210,6 +210,7 @@ export default {
         index: this.selectedMovement.index
       });
     },
+
     reset() {
       this.$refs.form.reset();
       this.$emit("close");

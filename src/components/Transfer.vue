@@ -53,7 +53,11 @@
                   label="Account"
                   required
                 ></v-select>
-                <v-text-field v-model="to_account" label="Destination" required></v-text-field>
+                <v-text-field
+                  v-model="to_account"
+                  label="Destination"
+                  required
+                ></v-text-field>
               </v-col>
 
               <v-col cols="12">
@@ -76,7 +80,9 @@
         <v-btn color="warning" text @click="reset">Cancel</v-btn>
         <v-btn color="error" text @click="reset">Clear</v-btn>
 
-        <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer">Save</v-btn>
+        <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

@@ -129,9 +129,16 @@ export default new Vuex.Store({
       state.accounts[foudAccountIndex].accountname = codeName.name;
     },
     mutateDeleteAccount(state, code) {
-      state.accounts = state.accounts.filter(
-        account1 => account1.code !== code
+      const foudAccountIndex = state.accounts.findIndex(
+        account => account.code === code
       );
+      if (state.accounts[foudAccountIndex].info.length === 0) {
+        state.accounts = state.accounts.filter(
+          account1 => account1.code !== code
+        );
+      } else {
+        alert("Can't delete this account");
+      }
     }
   },
   getters: {

@@ -12,7 +12,9 @@
                 <h3>Cuenta Debito</h3>
                 <v-divider></v-divider>
 
-                <v-text-field label="Cuenta de débito" v-model="nameAccount">{{account}}</v-text-field>
+                <v-text-field label="Cuenta de débito" v-model="nameAccount">{{
+                  account
+                }}</v-text-field>
 
                 <p class="font-weight-bold">Monto Total: {{ amounts }}</p>
 
@@ -44,7 +46,11 @@
                   label="Account"
                   required
                 ></v-select-->
-                <v-text-field v-model="to_account" label="Destination" required></v-text-field>
+                <v-text-field
+                  v-model="to_account"
+                  label="Destination"
+                  required
+                ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
@@ -74,7 +80,9 @@
           <v-btn color="warning" text @click="dialog2 = false">Cancel</v-btn>
           <v-btn color="error" text @click="reset">Clear</v-btn>
 
-          <v-btn :disabled="!valid" color="sucess" @click="submitTransfer">Save</v-btn>
+          <v-btn :disabled="!valid" color="sucess" @click="submitTransfer"
+            >Save</v-btn
+          >
           <v-btn color="sucess" @click="modifyTransfer">Actualizae</v-btn>
         </v-card-actions>
       </v-card>

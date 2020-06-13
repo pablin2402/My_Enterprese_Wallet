@@ -1,0 +1,85 @@
+{
+    "accounts" :
+    [
+        { 
+            "code": "0",
+            "accountname": "Saving",
+            "quantity": "300",
+            "info":
+            [
+                { 
+                    "code": "",
+                    "name": "Books", 
+                    "category": "transfer", 
+                    "amount": "234", 
+                    "type": "income"
+                },
+                { 
+                    "code": "",
+                    "name": "Books", 
+                    "category": "transfer", 
+                    "amount": "234", 
+                    "type": "expense"
+                }
+            ]
+        },
+        { 
+            "code": "1",
+            "accountname": "Clients", 
+            "quantity": "3400",
+            "info":
+            [
+                { 
+                    "code": "",
+                    "name": "Books", 
+                    "category": "transfer", 
+                    "amount": "234", 
+                    "type": "income"
+                },
+                { 
+                    "code": "",
+                    "name": "Pencils", 
+                    "category": "transfer", 
+                    "amount": "234", 
+                    "type": "expense"
+                },
+                { 
+                    "code": "",
+                    "name": "Pens", 
+                    "category": "transfer", 
+                    "amount": "234", 
+                    "type": "expense"
+                }
+            ]
+        },
+        { 
+            "code": "2",
+            "accountname": "Enterprise", 
+            "quantity": "800",
+            "info":
+            [
+                { 
+                    "code": "",
+                    "name": "Books", 
+                    "category": "transfer", 
+                    "amount": "234", 
+                    "type": "income"
+                },
+                { 
+                    "code": "",
+                    "name": "Pencils", 
+                    "category": "transfer", 
+                    "amount": "234", 
+                    "type": "expense"
+                },
+                { 
+                    "code": "",
+                    "name": "Pens", 
+                    "category": "transfer", 
+                    "amount": "234", 
+                    "type": "expense"
+                }
+            ]
+        }
+    ]
+}

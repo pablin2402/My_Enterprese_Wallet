@@ -30,6 +30,9 @@
               :to="{ name: 'CustomAccount', params: { id: account } }"
             >
               <v-card-title>
+                <div class="subheading">{{ account.code }}</div>
+              </v-card-title>
+              <v-card-title>
                 <div class="subheading">{{ account.accountname }}</div>
               </v-card-title>
             </router-link>

@@ -117,6 +117,9 @@ export default new Vuex.Store({
       state.categories.push(category);
     },
     mutateCreateAccount(state, account) {
+      var aux = state.accounts[state.accounts.length - 1].code.split("-");
+      var aux2 = Number(aux[1]) + 1;
+      account.code = "account-" + aux2;
       state.accounts.push(account);
     },
     mutateUpdateAccount(state, codeName) {

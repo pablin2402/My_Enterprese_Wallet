@@ -5,7 +5,6 @@
         <span class="headline">Create account</span>
       </v-card-title>
       <v-col cols="12">
-        <v-text-field v-model="code" label="Code" required></v-text-field>
         <v-text-field v-model="name" label="Name" required></v-text-field>
       </v-col>
       <v-spacer></v-spacer>
@@ -30,22 +29,19 @@ export default {
   },
   data() {
     return {
-      code: "",
-      name: "",
-      quantity: ""
+      name: ""
     };
   },
   methods: {
     creaaccount() {
       this.$emit("creaaccount", {
-        code: this.code,
+        code: "",
         accountname: this.name,
         quantity: "0",
         info: []
       });
       this.code = "";
       this.name = "";
-      this.quantity = "";
     },
     closeDialog() {
       this.$emit("close-create");

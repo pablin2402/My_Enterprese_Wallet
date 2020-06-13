@@ -15,29 +15,17 @@
         :key="category.code"
       >
         <v-layout row wrap justify-space-around class="pa-3">
-          <v-flex md2>
+          <v-flex md4>
             <div class="caption grey--text">Code</div>
             <div>{{ category.code }}</div>
           </v-flex>
-          <v-flex md2>
+          <v-flex md4>
             <div class="caption grey--text">Name</div>
             <div>{{ category.name }}</div>
           </v-flex>
-          <v-flex md2>
+          <v-flex md4>
             <div class="caption grey--text">Type</div>
             <div>{{ category.type }}</div>
-          </v-flex>
-          <v-flex md2>
-            <v-btn small>
-              <v-icon>mdi-trash-can-outline</v-icon>
-              <span>Delete</span>
-            </v-btn>
-          </v-flex>
-          <v-flex md2>
-            <v-btn small>
-              <v-icon>mdi-pencil-outline</v-icon>
-              <span>Update</span>
-            </v-btn>
           </v-flex>
         </v-layout>
       </v-card>

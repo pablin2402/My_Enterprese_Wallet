@@ -2,7 +2,7 @@
   <div class="customAccount">
     <v-container class="my-10" grid-list-md>
       <h1>Custom Account: {{ accounts[accountIndex].name }}</h1>
-      <h2>Saldo {{ budget }} Bs.</h2>
+      <h2>Saldo {{ accounts[accountIndex].totalAmount }} Bs.</h2>
       <br />
       <v-layout row justify-space-around>
         <v-flex md1 class="pt-6">
@@ -30,7 +30,6 @@
             <Transfer
               :visible="dialog2"
               :account="accountname"
-              :amounts="quantity"
               @close="dialog2 = false"
             ></Transfer>
           </v-btn>
@@ -158,15 +157,19 @@ export default {
       return this.accounts[this.accountIndex].info;
     },
     budget() {
-      let amount = 0;
+      let currentBudget = 0;
       this.info.forEach(movement => {
-        if (movement.type == "income") {
-          amount += parseInt(movement.amount);
+        if (movement.type === "income") {
+          currentBudget += parseInt(movement.amount);
         } else {
-          amount -= parseInt(movement.amount);
+          currentBudget -= parseInt(movement.amount);
         }
       });
-      return amount;
+      this.$store.dispatch("updateAccountBudget", {
+        amount: currentBudget,
+        index: this.accountIndex
+      });
+      return currentBudget;
     }
   },
   methods: {
@@ -177,12 +180,16 @@ export default {
       );
     },
     sendData(selectedMovement, newMovement) {
-      this.selectedMovement = {
-        ...selectedMovement,
-        index: this.accountIndex
-      };
-      this.dialog = true;
-      this.newMovement = newMovement;
+      if (!newMovement && selectedMovement.category === "transfer") {
+        alert("You cant update transfer type movements");
+      } else {
+        this.selectedMovement = {
+          ...selectedMovement,
+          index: this.accountIndex
+        };
+        this.dialog = true;
+        this.newMovement = newMovement;
+      }
     },
     deleteMovement(updatedMovement) {
       const response = confirm(
@@ -194,10 +201,25 @@ export default {
           index: this.accountIndex
         });
       }
+    },
+    updateBudget() {
+      let currentBudget = 0;
+      this.info.forEach(movement => {
+        if (movement.type === "income") {
+          currentBudget += parseInt(movement.amount);
+        } else {
+          currentBudget -= parseInt(movement.amount);
+        }
+      });
+      this.$store.dispatch("updateAccountBudget", {
+        amount: currentBudget,
+        index: this.accountIndex
+      });
     }
   },
   created() {
     this.findAccountIndex();
+    this.budget();
   }
 };
 </script>

@@ -45,7 +45,8 @@
                 required('Amount'),
                 minLength('Amount', 2),
                 maxLength('Amount', 9),
-                checkType('Amount')
+                checkType('Amount'),
+                checkBudgetUpdate()
               ]"
             ></v-text-field>
           </v-form>
@@ -74,6 +75,7 @@ export default {
   data() {
     return {
       valid: false,
+      mountedMovemntAmount: 0,
       actionTag() {
         return {};
       },
@@ -94,11 +96,14 @@ export default {
       checkType(propertyType) {
         return value => value > 0 || `${propertyType} must be an number`;
       },
-      checkBudget() {
+      checkBudgetUpdate() {
+        const budget = this.accounts[this.selectedMovement.index].totalAmount;
+        //debugger;
         return value =>
-          (this.selectedMovement.type == "expense" &&
-            value <= this.accounts[this.selectedMovement.index].amount) ||
-          "Expense must be less than remaining budget";
+          this.selectedMovement.type === "income" ||
+          //(!this.newMovement && parseInt(value) <= budget + parseInt(value)) ||
+          value <= budget ||
+          `Expense must be less than the remaining budget ${budget}`;
       }
     };
   },
@@ -116,6 +121,7 @@ export default {
           category: "",
           amount: "",
           type: "",
+          date: "",
           index: ""
         };
       }
@@ -130,6 +136,9 @@ export default {
     accounts() {
       return this.getAccountList;
     },
+    info() {
+      return this.accounts[this.selectedMovement.index].info;
+    },
     categoriesObject() {
       return this.getCategoryList;
     },
@@ -137,14 +146,20 @@ export default {
       let categoriesArray = [];
       if (this.selectedMovement.type === "income") {
         for (let i = 0; i < this.categoriesObject.length; i++) {
-          if (this.categoriesObject[i].type === "income") {
+          if (
+            this.categoriesObject[i].type === "income" &&
+            this.categoriesObject[i].name !== "transfer"
+          ) {
             categoriesArray.push(this.categoriesObject[i].name);
           }
         }
       }
       if (this.selectedMovement.type === "expense") {
         for (let i = 0; i < this.categoriesObject.length; i++) {
-          if (this.categoriesObject[i].type === "expense") {
+          if (
+            this.categoriesObject[i].type === "expense" &&
+            this.categoriesObject[i].name !== "transfer"
+          ) {
             categoriesArray.push(this.categoriesObject[i].name);
           }
         }
@@ -156,9 +171,11 @@ export default {
     dispatchAction() {
       if (this.newMovement) {
         this.generateNewId();
+        this.getCurrentDate();
         this.$store.dispatch("addMovement", this.selectedMovement);
       } else {
         this.$store.dispatch("updateMovement", this.selectedMovement);
+        this.updateBudget();
       }
       this.reset();
     },
@@ -170,6 +187,28 @@ export default {
       ].id;
       const newId = parseInt(lastId.split("-")[1]) + 1;
       this.selectedMovement.id = `${this.selectedMovement.index}-${newId}`;
+    },
+    getCurrentDate() {
+      let today = new Date();
+      const dd = String(today.getDate()).padStart(2, "0");
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const yyyy = today.getFullYear();
+
+      this.selectedMovement.date = `${yyyy}-${mm}-${dd}`;
+    },
+    updateBudget() {
+      let currentBudget = 0;
+      this.info.forEach(movement => {
+        if (movement.type === "income") {
+          currentBudget += parseInt(movement.amount);
+        } else {
+          currentBudget -= parseInt(movement.amount);
+        }
+      });
+      this.$store.dispatch("updateAccountBudget", {
+        amount: currentBudget,
+        index: this.selectedMovement.index
+      });
     },
     reset() {
       this.dialog = false;

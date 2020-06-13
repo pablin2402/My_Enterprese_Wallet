@@ -16,28 +16,32 @@ export default new Vuex.Store({
             name: "Ahorro1",
             category: "transfer",
             amount: "100000",
-            type: "income"
+            type: "income",
+            date: "2020-06-11"
           },
           {
             id: "0-1",
             name: "Ahorro2",
             category: "other",
             amount: "321",
-            type: "expense"
+            type: "expense",
+            date: "2020-06-11"
           },
           {
             id: "0-2",
             name: "Ahorro3",
             category: "transfer",
             amount: "123",
-            type: "income"
+            type: "income",
+            date: "2020-06-12"
           },
           {
             id: "0-3",
             name: "Ahorro4",
             category: "other",
             amount: "456",
-            type: "expense"
+            type: "expense",
+            date: "2020-06-12"
           }
         ]
       },
@@ -51,28 +55,32 @@ export default new Vuex.Store({
             name: "Books",
             category: "transfer",
             amount: "234",
-            type: "income"
+            type: "income",
+            date: "2020-06-10"
           },
           {
             id: "1-2",
             name: "Salary",
             category: "other",
             amount: "10000",
-            type: "income"
+            type: "income",
+            date: "2020-06-11"
           },
           {
             id: "1-3",
             name: "Desk",
             category: "transfer",
             amount: "123",
-            type: "income"
+            type: "income",
+            date: "2020-06-12"
           },
           {
             id: "1-4",
             name: "Chair",
             category: "other",
             amount: "456",
-            type: "expense"
+            type: "expense",
+            date: "2020-06-13"
           }
         ]
       },
@@ -117,6 +125,9 @@ export default new Vuex.Store({
     },
     deleteMovement({ commit }, deletedMovemment) {
       commit("deleteMovement", deletedMovemment);
+    },
+    updateAccountBudget({ commit }, updatedAmountObject) {
+      commit("updateAccountBudget", updatedAmountObject);
     }
   },
 
@@ -143,7 +154,8 @@ export default new Vuex.Store({
         name: newMovement.name,
         category: newMovement.category,
         amount: newMovement.amount,
-        type: newMovement.type
+        type: newMovement.type,
+        date: newMovement.date
       });
     },
     updateMovement(state, updatedMovement) {
@@ -162,6 +174,10 @@ export default new Vuex.Store({
       state.accounts[deletedMovement.index].info = state.accounts[
         deletedMovement.index
       ].info.filter(account => account.id !== deletedMovement.id);
+    },
+    updateAccountBudget(state, updatedAmountObject) {
+      state.accounts[updatedAmountObject.index].totalAmount =
+        updatedAmountObject.amount;
     }
   },
 

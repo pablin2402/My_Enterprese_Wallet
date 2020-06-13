@@ -160,10 +160,10 @@ export default {
       }
     },
     ...mapGetters(["ListDetails"]),
-    ...mapGetters(["getTransferList"]),
+    ...mapGetters(["getAccountList"]),
 
     tr() {
-      return this.getTransferList;
+      return this.getAccountList;
     },
     details() {
       return this.ListDetails;

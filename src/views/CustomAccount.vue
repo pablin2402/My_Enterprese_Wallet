@@ -1,7 +1,8 @@
 <template>
   <div class="customAccount">
     <v-container class="my-10" grid-list-md>
-      <h1>Custom Account</h1>
+      <h1>Custom Account: {{ accounts[accountIndex].name }}</h1>
+      <h2>Saldo {{ accounts[accountIndex].totalAmount }} Bs.</h2>
       <br />
       <v-layout row justify-space-around>
         <v-flex md1 class="pt-6">
@@ -10,7 +11,7 @@
             depressed
             color="#F2F2F2"
             width="100px"
-            @click="dialog = true"
+            @click="sendData(selectedMovement, true)"
           >
             <v-icon left small>mdi-plus-circle-outline</v-icon>
             <span class="caption text-lowercase">New</span>
@@ -29,7 +30,6 @@
             <Transfer
               :visible="dialog2"
               :account="accountname"
-              :amounts="quantity"
               @close="dialog2 = false"
             ></Transfer>
           </v-btn>
@@ -64,7 +64,7 @@
         </v-flex>
       </v-layout>
       <v-divider></v-divider>
-      <v-card color="#F2F2F2" flat v-for="data in info" :key="data.name">
+      <v-card color="#F2F2F2" flat v-for="data in info" :key="data.id">
         <v-layout
           row
           wrap
@@ -81,16 +81,16 @@
           </v-flex>
           <v-flex md2>
             <div class="caption grey--text">Amount</div>
-            <div>{{ data.amount }}</div>
+            <div>{{ data.amount }} Bs.</div>
           </v-flex>
           <v-flex md2>
-            <v-btn small>
+            <v-btn small :type="data.type" @click="deleteMovement(data)">
               <v-icon>mdi-trash-can-outline</v-icon>
               <span>Delete</span>
             </v-btn>
           </v-flex>
           <v-flex md2>
-            <v-btn small>
+            <v-btn small @click="sendData(data, false)">
               <v-icon>mdi-pencil-outline</v-icon>
               <span>Update</span>
             </v-btn>
@@ -98,47 +98,12 @@
         </v-layout>
       </v-card>
       <v-divider></v-divider>
-      <v-dialog v-model="dialog" persistent max-width="600px">
-        <v-card>
-          <v-card-title>
-            <span class="headline">Movimiento</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12">
-                  <v-radio-group v-model="movementType" row>
-                    <v-radio label="Income" value="income"></v-radio>
-                    <v-radio label="Expense" value="expense"></v-radio>
-                  </v-radio-group>
-                </v-col>
-                <v-col cols="12">
-                  <v-select
-                    v-model="category"
-                    :items="filteredCategories"
-                    label="Choose category"
-                  ></v-select>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field label="Name" required></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field label="Amount" required></v-text-field>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="dialog = false"
-              >Cancel</v-btn
-            >
-            <v-btn color="blue darken-1" text @click="dialog = false"
-              >Save</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <Movement
+        :dialog="dialog"
+        :selectedMovement="selectedMovement"
+        :newMovement="newMovement"
+        @close="dialog = false"
+      />
     </v-container>
   </div>
 </template>
@@ -146,31 +111,30 @@
 <script>
 import { mapGetters } from "vuex";
 import Transfer from "../components/Transfer";
+import Movement from "../components/Movement";
 
 export default {
   name: "CustomAccount",
   components: {
-    Transfer
+    Transfer,
+    Movement
   },
   data() {
     return {
-      info: [
-        { name: "Books", category: "transfer", amount: "234", type: "income" },
-        { name: "Class", category: "other", amount: "321", type: "expense" },
-        { name: "Desk", category: "transfer", amount: "123", type: "income" },
-        { name: "Chair", category: "other", amount: "456", type: "expense" }
-      ],
       selectedDate: null,
       dialog: false,
       dialog2: false,
-      category: "",
-      movementType: "",
-      accountname: this.$route.params.id.accountname,
-      quantity: this.$route.params.id.quantity
+      accountname: "",
+      accountIndex: "",
+      selectedMovement: {},
+      newMovement: false
     };
   },
   computed: {
-    ...mapGetters(["getCategoryList"]),
+    ...mapGetters(["getAccountList", "getCategoryList"]),
+    accounts() {
+      return this.getAccountList;
+    },
     categoriesObject() {
       return this.getCategoryList;
     },
@@ -189,24 +153,79 @@ export default {
 
       return categoriesArray;
     },
-    filteredCategories() {
-      let categoriesArray = [];
-      if (this.movementType === "income") {
-        for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
-          if (this.categoriesObject[i].type === "income") {
-            categoriesArray.push([this.categoriesObject[i].name]);
-          }
+    info() {
+      return this.accounts[this.accountIndex].info;
+    },
+    budget() {
+      let currentBudget = 0;
+      this.info.forEach(movement => {
+        if (movement.type === "income") {
+          currentBudget += parseInt(movement.amount);
+        } else {
+          currentBudget -= parseInt(movement.amount);
         }
-      }
-      if (this.movementType === "expense") {
-        for (let i = 0; i < Object.keys(this.categoriesObject).length; i++) {
-          if (this.categoriesObject[i].type === "expense") {
-            categoriesArray.push([this.categoriesObject[i].name]);
-          }
-        }
-      }
-      return categoriesArray;
+      });
+      this.$store.dispatch("updateAccountBudget", {
+        amount: currentBudget,
+        index: this.accountIndex
+      });
+      return currentBudget;
     }
+  },
+  methods: {
+    findAccountIndex() {
+      this.accountname = this.$route.params.id;
+      this.accountIndex = this.accounts.findIndex(
+        account => account.name === this.accountname
+      );
+    },
+    sendData(selectedMovement, newMovement) {
+      if (!newMovement && selectedMovement.category === "transfer") {
+        alert("You cant update transfer type movements");
+      } else {
+        this.selectedMovement = {
+          ...selectedMovement,
+          index: this.accountIndex
+        };
+        this.dialog = true;
+        this.newMovement = newMovement;
+      }
+    },
+    deleteMovement(deletedMovement) {
+      if (
+        deletedMovement.type === "income" &&
+        this.budget - parseInt(deletedMovement.amount) < 0
+      ) {
+        alert("You cant delete this income");
+      } else {
+        const response = confirm(
+          `Are you sure you want to delete ${deletedMovement.name}`
+        );
+        if (response) {
+          this.$store.dispatch("deleteMovement", {
+            ...deletedMovement,
+            index: this.accountIndex
+          });
+        }
+      }
+    },
+    updateBudget() {
+      let currentBudget = 0;
+      this.info.forEach(movement => {
+        if (movement.type === "income") {
+          currentBudget += parseInt(movement.amount);
+        } else {
+          currentBudget -= parseInt(movement.amount);
+        }
+      });
+      this.$store.dispatch("updateAccountBudget", {
+        amount: currentBudget,
+        index: this.accountIndex
+      });
+    }
+  },
+  created() {
+    this.findAccountIndex();
   }
 };
 </script>

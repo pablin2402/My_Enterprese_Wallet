@@ -8,66 +8,87 @@ export default new Vuex.Store({
     accounts: [
       {
         code: "account-1",
-        accountname: "Saving",
-        quantity: "300",
+        name: "Saving",
+        totalAmount: "0",
         info: [
           {
-            code: "",
-            name: "Books",
+            id: "0-0",
+            name: "Ahorro1",
             category: "transfer",
-            amount: "234",
-            type: "income"
+            amount: "1000",
+            type: "income",
+            date: "2020-06-11"
           },
           {
-            code: "",
-            name: "Books",
+            id: "0-1",
+            name: "Ahorro2",
+            category: "other",
+            amount: "321",
+            type: "expense",
+            date: "2020-06-11"
+          },
+          {
+            id: "0-2",
+            name: "Ahorro3",
             category: "transfer",
-            amount: "234",
-            type: "expense"
+            amount: "123",
+            type: "income",
+            date: "2020-06-12"
+          },
+          {
+            id: "0-3",
+            name: "Ahorro4",
+            category: "other",
+            amount: "456",
+            type: "expense",
+            date: "2020-06-12"
           }
         ]
       },
       {
         code: "account-2",
-        accountname: "Clients",
-        quantity: "300",
+        name: "Clients",
+        totalAmount: "0",
         info: [
           {
-            code: "",
+            id: "1-0",
             name: "Books",
             category: "transfer",
             amount: "234",
-            type: "income"
+            type: "income",
+            date: "2020-06-10"
           },
           {
-            code: "",
-            name: "Books",
+            id: "1-1",
+            name: "Salary",
+            category: "other",
+            amount: "10000",
+            type: "income",
+            date: "2020-06-11"
+          },
+          {
+            id: "1-2",
+            name: "Desk",
             category: "transfer",
-            amount: "234",
-            type: "expense"
+            amount: "123",
+            type: "income",
+            date: "2020-06-12"
+          },
+          {
+            id: "1-3",
+            name: "Chair",
+            category: "other",
+            amount: "456",
+            type: "expense",
+            date: "2020-06-13"
           }
         ]
       },
       {
         code: "account-3",
-        accountname: "Enterprise",
-        quantity: "300",
-        info: [
-          {
-            code: "",
-            name: "Books",
-            category: "transfer",
-            amount: "234",
-            type: "income"
-          },
-          {
-            code: "",
-            name: "Books",
-            category: "transfer",
-            amount: "234",
-            type: "expense"
-          }
-        ]
+        name: "Enterprise",
+        totalAmount: "0",
+        info: []
       }
     ],
     categories: [
@@ -82,11 +103,11 @@ export default new Vuex.Store({
       commit("mutateCategoryList", category);
     },
     addTransfer({ commit }, transfer) {
-      //student.accountName = student.accountName + "-inserted";
+      //student.name = student.name + "-inserted";
       commit("mutateTransfertList", transfer);
     },
     updateTransfer({ commit }, updated) {
-      //student.accountName = student.accountName + "-inserted";
+      //student.name = student.name + "-inserted";
       commit("mutateUpdate", updated);
     },
     createAccount({ commit }, accountCreated) {
@@ -97,17 +118,28 @@ export default new Vuex.Store({
     },
     deleteAccount({ commit }, accountDeleted) {
       commit("mutateDeleteAccount", accountDeleted);
+    },
+    addMovement({ commit }, newMovemment) {
+      commit("addMovement", newMovemment);
+    },
+    updateMovement({ commit }, updatedMovemment) {
+      commit("updateMovement", updatedMovemment);
+    },
+    deleteMovement({ commit }, deletedMovemment) {
+      commit("deleteMovement", deletedMovemment);
+    },
+    updateAccountBudget({ commit }, updatedAmountObject) {
+      commit("updateAccountBudget", updatedAmountObject);
     }
   },
+
   mutations: {
     mutateTransfertList(state, transfer) {
       state.accounts.info.push(transfer);
     },
     mutateUpdate(state, upTransfer) {
       let upload;
-      state.accounts.info.find(
-        trans => trans.accountname === upTransfer.accountname
-      );
+      state.accounts.info.find(trans => trans.name === upTransfer.name);
       upload = state.accounts.info.indexOf(this.trans);
       if (this.trans !== null) {
         state.accounts.info.splice(upload, 1, upTransfer);
@@ -126,7 +158,7 @@ export default new Vuex.Store({
       const foudAccountIndex = state.accounts.findIndex(
         account => account.code === codeName.code
       );
-      state.accounts[foudAccountIndex].accountname = codeName.name;
+      state.accounts[foudAccountIndex].name = codeName.name;
     },
     mutateDeleteAccount(state, code) {
       const foudAccountIndex = state.accounts.findIndex(
@@ -139,13 +171,45 @@ export default new Vuex.Store({
       } else {
         alert("Can't delete this account");
       }
+    },
+    addMovement(state, newMovement) {
+      state.accounts[newMovement.index].info.push({
+        id: newMovement.id,
+        name: newMovement.name,
+        category: newMovement.category,
+        amount: newMovement.amount,
+        type: newMovement.type,
+        date: newMovement.date
+      });
+    },
+    updateMovement(state, updatedMovement) {
+      const foundAccountIndex = state.accounts[
+        updatedMovement.index
+      ].info.findIndex(account => account.id === updatedMovement.id);
+      state.accounts[updatedMovement.index].info[foundAccountIndex] = {
+        id: updatedMovement.id,
+        name: updatedMovement.name,
+        category: updatedMovement.category,
+        amount: updatedMovement.amount,
+        type: updatedMovement.type
+      };
+    },
+    deleteMovement(state, deletedMovement) {
+      state.accounts[deletedMovement.index].info = state.accounts[
+        deletedMovement.index
+      ].info.filter(account => account.id !== deletedMovement.id);
+    },
+    updateAccountBudget(state, updatedAmountObject) {
+      state.accounts[updatedAmountObject.index].totalAmount =
+        updatedAmountObject.amount;
     }
   },
+
   getters: {
     getCategoryList(state) {
       return state.categories;
     },
-    getTransferList(state) {
+    getAccountList(state) {
       return state.accounts;
     },
     ListDetails(state) {

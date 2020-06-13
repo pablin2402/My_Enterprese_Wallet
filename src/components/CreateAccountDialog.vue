@@ -36,8 +36,8 @@ export default {
     creaaccount() {
       this.$emit("creaaccount", {
         code: "",
-        accountname: this.name,
-        quantity: "0",
+        name: this.name,
+        totalAmount: "0",
         info: []
       });
       this.code = "";

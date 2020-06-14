@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog2" persistent max-width="600px">
     <v-card>
       <v-card-title>
-        <span class="headline">Transferencia</span>
+        <span class="headline">Transfer</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -14,60 +14,37 @@
                 <!--cuenta dueño-->
               </v-col>
               <v-col cols="12">
-                <v-select
-                  v-model="selectedMovement.name"
-                  :items="getAccounts"
-                  :rules="[v => !!v || 'Account is required']"
-                  label="Account"
-                  required
-                ></v-select>
-              </v-col>
-              <v-col cols="12">
                 <v-text-field
-                  v-model="selectedMovement.amount"
+                  v-model="selectedMovement.name"
                   autocomplete="off"
-                  label="Amount"
-                  counter="5"
-                  :rules="amountRules"
+                  label="Name of the transfer"
+                  counter="20"
+                  :rules="nameRules"
                 ></v-text-field>
               </v-col>
 
-              <v-col cols="12">
-                <v-select
-                  v-model="selectedMovement.category"
-                  :items="getCategories"
-                  :rules="[v => !!v || 'Category is required']"
-                  label="Category"
-                  required
-                ></v-select>
-              </v-col>
               <v-col cols="12">
                 <h3>Cuenta Abonado</h3>
                 <v-divider></v-divider>
                 <br />
 
                 <v-select
-                  v-model="to_account"
+                  id="cuenta"
+                  v-model="selectedMovement.toaccount"
                   :items="getAccounts"
                   :rules="[v => !!v || 'Account is required']"
                   label="Account"
                   required
                 ></v-select>
-                <v-text-field
-                  v-model="to_account"
-                  label="Destination"
-                  required
-                ></v-text-field>
               </v-col>
 
               <v-col cols="12">
                 <v-text-field
-                  v-model="amount"
-                  :counter="5"
-                  :rules="amountRules"
+                  v-model.number="selectedMovement.amount"
+                  autocomplete="off"
                   label="Amount"
-                  type="number"
-                  required
+                  counter="5"
+                  :rules="amountRules"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -78,11 +55,8 @@
         <v-spacer></v-spacer>
 
         <v-btn color="warning" text @click="reset">Cancel</v-btn>
-        <v-btn color="error" text @click="reset">Clear</v-btn>
 
-        <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer"
-          >Save</v-btn
-        >
+        <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -97,21 +71,15 @@ export default {
   data() {
     return {
       valid: true,
-      id: "",
-      category: "",
-      amount: "",
-      type: "",
-      name: "", //nameaccount
-      date: "",
-      to_account: "",
-      type_account: "",
 
       amountRules: [
         v => !!v || "Amount is required",
         v => (v && v.length < 5) || "Amount must be less than 10000$"
-        /* v =>
-          (v && v <= this.amounts) ||
-          " You cannot deposit more money than you have in your account"*/
+      ],
+      nameRules: [
+        v => !!v || "Name is required",
+        v => (v && v.length <= 20) || "Name must be less than 20 characters",
+        v => (v && v.length >= 5) || "Name must have at least 5 characters"
       ]
     };
   },
@@ -119,22 +87,69 @@ export default {
     //addStudent
     submitTransfer() {
       if (this.$refs.form.validate()) {
-        this.generateNewId();
-        this.getCurrentDate();
-        this.getOutcome();
-        this.$store.dispatch("addMovement", this.selectedMovement);
+        let confirmation = confirm(
+          "Are you sure you want to debit the amount of " +
+            this.selectedMovement.amount +
+            " from your savings bank " +
+            this.selectedMovement.index +
+            " and change it to the saving bank " +
+            this.selectedMovement.toaccount
+        );
+        if (confirmation) {
+          this.addTransfer();
+          this.uploadAmount();
+          return true;
+        } else {
+          return false;
+        }
       }
+    },
+
+    uploadAmount() {
+      this.$store.dispatch("updateTransfer", {
+        name: document.getElementById(this.selectedMovement.amount).value,
+        totalAmount: this.getAmount("Clients")
+      });
+    },
+    name() {
+      const name = `${this.cuenta}`;
+      return name;
+    },
+    addTransfer() {
+      //this.getAmmount("Saving");
+
+      this.generateNewId();
+      this.getCurrentDate();
+      this.getOutcome();
+      this.getTransfer();
+      this.getIncome();
+      this.$store.dispatch("addMovement", this.selectedMovement);
+      this.reset();
     },
     generateNewId() {
       let id = +new Date() + "-" + Math.floor(Math.random() * 1000);
-
       this.selectedMovement.id = "TRANSFER " + "-" + id;
     },
     getOutcome() {
       const outcome = "expense";
-
       this.selectedMovement.type = `${outcome}`;
     },
+    getTransfer() {
+      const transfer = "transfer";
+      this.selectedMovement.category = `${transfer}`;
+    },
+    getIncome() {
+      const income = "income";
+      this.selectedMovement.income_to = `${income}`;
+    },
+    getAmount(name) {
+      const ammount = this.accountsObject.findIndex(
+        trans => trans.name === name
+      );
+      // console.log(this.accountsObject[ammount].totalAmount);
+      return this.accountsObject[ammount].totalAmount;
+    },
+
     getCurrentDate() {
       let today = new Date();
       const dd = String(today.getDate()).padStart(2, "0");
@@ -164,7 +179,11 @@ export default {
           amount: "",
           type: "",
           date: "",
-          index: ""
+          index: "",
+          //Other Account
+          toaccount: "",
+          income_to: "",
+          index_to: ""
         };
       }
     },

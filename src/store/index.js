@@ -138,12 +138,10 @@ export default new Vuex.Store({
       state.accounts.info.push(transfer);
     },
     mutateUpdate(state, upTransfer) {
-      let upload;
-      state.accounts.info.find(trans => trans.name === upTransfer.name);
-      upload = state.accounts.info.indexOf(this.trans);
-      if (this.trans !== null) {
-        state.accounts.info.splice(upload, 1, upTransfer);
-      }
+      const foundAccountIndex = state.accounts.findIndex(
+        account => account.name === upTransfer.name
+      );
+      state.accounts[foundAccountIndex].totalAmount = upTransfer.totalAmount;
     },
     mutateCategoryList(state, category) {
       state.categories.push(category);

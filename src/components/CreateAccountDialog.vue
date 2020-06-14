@@ -8,8 +8,15 @@
         <v-text-field v-model="name" label="Name" required></v-text-field>
       </v-col>
       <v-spacer></v-spacer>
-      <v-btn color="blue darken-1" text @click.stop="show = false">Cancel</v-btn>
-      <v-btn color="blue darken-1" text @click.stop="creaaccount(), (show = false)">Create</v-btn>
+      <v-btn color="blue darken-1" text @click.stop="show = false"
+        >Cancel</v-btn
+      >
+      <v-btn
+        color="blue darken-1"
+        text
+        @click.stop="creaaccount(), (show = false)"
+        >Create</v-btn
+      >
     </v-card>
   </v-dialog>
 </template>

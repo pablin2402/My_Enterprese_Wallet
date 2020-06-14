@@ -179,13 +179,17 @@ export default {
         this.reset();
       }
     },
+
     generateNewId() {
       const numberOfMovements = this.accounts[this.selectedMovement.index].info
         .length;
-      const lastId = this.accounts[this.selectedMovement.index].info[
-        numberOfMovements - 1
-      ].id;
-      const newId = parseInt(lastId.split("-")[1]) + 1;
+      let newId = 0;
+      if (numberOfMovements > 0) {
+        const lastId = this.accounts[this.selectedMovement.index].info[
+          numberOfMovements - 1
+        ].id;
+        newId = parseInt(lastId.split("-")[1]) + 1;
+      }
       this.selectedMovement.id = `${this.selectedMovement.index}-${newId}`;
     },
     getCurrentDate() {

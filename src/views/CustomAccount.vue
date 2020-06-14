@@ -50,7 +50,6 @@
                 label="Filter by Date"
                 prepend-icon="mdi-calendar-range"
                 v-on="on"
-                v-model="date"
               ></v-text-field>
             </template>
             <v-date-picker
@@ -72,8 +71,8 @@
       <v-card
         color="#F2F2F2"
         flat
-        v-for="data in filterList"
-        :key="/*data.id,*/ (data.categorieSelect, data.date)"
+        v-for="data in filterOfFilter"
+        :key="/*data.id,*/ (data.categorieSelect, data.selectedDate)"
       >
         <div>
           <v-layout
@@ -181,17 +180,6 @@ export default {
       }
       return infoArray;
     },
-    dateList() {
-      const dateArray = [];
-      let infoAccount = [];
-      infoAccount = this.accounts[this.accountIndex].info;
-      for (let i = 0; i < infoAccount.length; i++) {
-        if (this.accounts[this.accountIndex].info[i].date === this.date[0]) {
-          dateArray[i] = this.accounts[this.accountIndex].info[i];
-        }
-      }
-      return dateArray;
-    },
     info() {
       return this.accounts[this.accountIndex].info;
     },
@@ -217,13 +205,21 @@ export default {
           : this.categoriesList.filter(item => {
               return item.category === this.categorieSelect[0];
             });
-      filtered =
-        this.date === undefined
+      /*filtered =
+        this.selectedDate === null
           ? filtered
-          : this.dateList.filter(item => {
-              return item.date === this.date;
+          : this.filtered.filter(item => item.date === this.selectedDate);
+      console.log(this.selectedDate);*/
+      return filtered;
+    },
+    filterOfFilter() {
+      let filtered = this.filterList;
+      filtered =
+        this.selectedDate === null
+          ? filtered
+          : filtered.filter(item => {
+              return item.date === this.selectedDate;
             });
-      console.log(this.date);
       return filtered;
     }
   },

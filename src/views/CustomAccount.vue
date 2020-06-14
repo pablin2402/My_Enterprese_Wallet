@@ -97,6 +97,7 @@
         :dialog2="dialog2"
         :selectedMovement="selectedMovement"
         :newMovement="newMovement"
+        :account="accountIndex"
         @close="dialog2 = false"
       ></Transfer>
 

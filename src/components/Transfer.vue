@@ -19,7 +19,7 @@
                   autocomplete="off"
                   label="Name of the transfer"
                   counter="20"
-                  :rules="nameRules"
+                  :rules="rules.nameRules"
                 ></v-text-field>
               </v-col>
 
@@ -29,7 +29,6 @@
                 <br />
 
                 <v-select
-                  id="cuenta"
                   v-model="selectedMovement.toaccount"
                   :items="getAccounts"
                   :rules="[v => !!v || 'Account is required']"
@@ -41,10 +40,16 @@
               <v-col cols="12">
                 <v-text-field
                   v-model.number="selectedMovement.amount"
-                  autocomplete="off"
                   label="Amount"
+                  prefix="$"
                   counter="5"
-                  :rules="amountRules"
+                  :rules="[
+                    minLength('Amount', 2),
+                    maxLength('Amount', 5),
+                    checkBudget()
+                  ]"
+                  min="1"
+                  max="100"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -71,16 +76,34 @@ export default {
   data() {
     return {
       valid: true,
+      initialMovementAmount: 0,
 
-      amountRules: [
-        v => !!v || "Amount is required",
-        v => (v && v.length < 5) || "Amount must be less than 10000$"
-      ],
-      nameRules: [
-        v => !!v || "Name is required",
-        v => (v && v.length <= 20) || "Name must be less than 20 characters",
-        v => (v && v.length >= 5) || "Name must have at least 5 characters"
-      ]
+      minLength(propertyType, minLength) {
+        return value =>
+          (value + "").length >= minLength ||
+          `${propertyType} must be at least ${minLength} characters`;
+      },
+      maxLength(propertyType, maxLength) {
+        return value =>
+          (value + "").length <= maxLength ||
+          `${propertyType} must be less than ${maxLength} characters`;
+      },
+      checkBudget() {
+        var budget = this.accountsObject[this.selectedMovement.index]
+          .totalAmount;
+        console.log(budget + this.initialMovementAmount);
+        return value =>
+          value <= budget + this.initialMovementAmount ||
+          `Expense must be less than the remaining budget: ${budget +
+            this.initialMovementAmount}`;
+      },
+      rules: {
+        nameRules: [
+          v => !!v || "Name is required",
+          v => (v && v.length <= 20) || "Name must be less than 20 characters",
+          v => (v && v.length >= 5) || "Name must have at least 5 characters"
+        ]
+      }
     };
   },
   methods: {
@@ -91,12 +114,15 @@ export default {
           "Are you sure you want to debit the amount of " +
             this.selectedMovement.amount +
             " from your savings bank " +
-            this.selectedMovement.index +
+            this.accountsObject[this.selectedMovement.index].name +
             " and change it to the saving bank " +
             this.selectedMovement.toaccount
         );
         if (confirmation) {
           this.addTransfer();
+          //this.addTransferToOtherAccount();
+          this.uploadMyAmount();
+
           this.uploadAmount();
           return true;
         } else {
@@ -104,61 +130,98 @@ export default {
         }
       }
     },
+    uploadMyAmount() {
+      let totalbadge = 0;
+      totalbadge = this.getAmount(this.selectedMovement.toaccount);
 
-    uploadAmount() {
       this.$store.dispatch("updateTransfer", {
-        name: document.getElementById(this.selectedMovement.amount).value,
-        totalAmount: this.getAmount("Clients")
+        amount: this.selectedMovement.amount + totalbadge,
+        name: this.selectedMovement.toaccount
+      });
+      //  this.reset();
+    },
+    uploadAmount() {
+      let total = 0;
+      total =
+        this.getAmount(this.accountsObject[this.selectedMovement.index].name) -
+        this.selectedMovement.amount;
+      this.$store.dispatch("updateTransfer", {
+        amount: total,
+        name: this.accountsObject[this.selectedMovement.index].name
       });
     },
-    name() {
-      const name = `${this.cuenta}`;
-      return name;
+    getAmount(no) {
+      let nt = this.accountsObject.findIndex(trans => trans.name === no);
+      console.log(this.accountsObject[nt].totalAmount);
+      return this.accountsObject[nt].totalAmount;
+    },
+    getAmount2(no) {
+      let nt = this.accountsObject.findIndex(trans => trans.name === no);
+      console.log(this.accountsObject[nt].totalAmount);
+      return this.accountsObject[nt].totalAmount;
+    },
+    addTransferToOtherAccount() {
+      this.generateTypeIncome(),
+        this.generateNewId(),
+        this.getCurrentDate(),
+        this.generateCategory(),
+        this.codeTransfer(),
+        this.$store.dispatch(
+          "addMovementToOtherAccount",
+          this.selectedMovement
+        );
     },
     addTransfer() {
-      //this.getAmmount("Saving");
-
-      this.generateNewId();
-      this.getCurrentDate();
-      this.getOutcome();
-      this.getTransfer();
-      this.getIncome();
-      this.$store.dispatch("addMovement", this.selectedMovement);
-      this.reset();
+      this.generateType(),
+        this.generateNewId(),
+        this.getCurrentDate(),
+        this.generateCategory(),
+        this.$store.dispatch("addMovement", this.selectedMovement);
+    },
+    generateType() {
+      const type = "expense";
+      return (this.selectedMovement.type = `${type}`);
+    },
+    codeTransfer() {
+      const id_To = this.getIdAmountToCreate(this.selectedMovement.toaccount);
+      return this.selectedMovement.code == `${id_To}`;
+    },
+    generateTypeIncome() {
+      const type = "income";
+      return (this.selectedMovement.type = `${type}`);
+    },
+    generateCategory() {
+      const type = "transfer";
+      return (this.selectedMovement.category = `${type}`);
     },
     generateNewId() {
       let id = +new Date() + "-" + Math.floor(Math.random() * 1000);
-      this.selectedMovement.id = "TRANSFER " + "-" + id;
-    },
-    getOutcome() {
-      const outcome = "expense";
-      this.selectedMovement.type = `${outcome}`;
-    },
-    getTransfer() {
-      const transfer = "transfer";
-      this.selectedMovement.category = `${transfer}`;
-    },
-    getIncome() {
-      const income = "income";
-      this.selectedMovement.income_to = `${income}`;
-    },
-    getAmount(name) {
-      const ammount = this.accountsObject.findIndex(
-        trans => trans.name === name
-      );
-      // console.log(this.accountsObject[ammount].totalAmount);
-      return this.accountsObject[ammount].totalAmount;
+      return (this.selectedMovement.id = "TRANSFER " + "-" + `${id}`);
     },
 
+    getIdAmountToCreate(no) {
+      const nt = this.accountsObject.findIndex(trans => trans.name === no);
+      console.log(this.accountsObject[nt].code);
+      return this.accountsObject[nt].code;
+    },
+    getBudget() {
+      const budget = this.accountsObject[this.selectedMovement.index]
+        .totalAmount;
+      console.log(budget);
+      return budget;
+    },
     getCurrentDate() {
       let today = new Date();
       const dd = String(today.getDate()).padStart(2, "0");
       const mm = String(today.getMonth() + 1).padStart(2, "0");
       const yyyy = today.getFullYear();
 
-      this.selectedMovement.date = `${yyyy}-${mm}-${dd}`;
+      return (this.selectedMovement.date = `${yyyy}-${mm}-${dd}`);
     },
-
+    infoAccountMovement() {
+      const nameAccount = this.accounts[this.getIdAmountToCreate()].info;
+      return nameAccount;
+    },
     reset() {
       this.$refs.form.reset();
       this.$emit("close");
@@ -168,6 +231,10 @@ export default {
     dialog2: {
       type: Boolean,
       default: false
+    },
+    account: {
+      type: Number,
+      default: -1
     },
     selectedMovement: {
       type: Object,
@@ -180,10 +247,11 @@ export default {
           type: "",
           date: "",
           index: "",
+          code: "",
           //Other Account
-          toaccount: "",
-          income_to: "",
-          index_to: ""
+          toaccount: ""
+          // income_to: "",
+          // index_to: ""
         };
       }
     },

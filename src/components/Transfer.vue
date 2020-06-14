@@ -61,7 +61,9 @@
 
         <v-btn color="warning" text @click="reset">Cancel</v-btn>
 
-        <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer">Save</v-btn>
+        <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -122,8 +124,8 @@ export default {
           this.addTransfer();
           //this.addTransferToOtherAccount();
           this.uploadMyAmount();
-
           this.uploadAmount();
+          this.reset();
           return true;
         } else {
           return false;

@@ -197,7 +197,6 @@ export default new Vuex.Store({
       }
     },
 
-
     updateMovement(state, updatedMovement) {
       const foundAccountIndex = state.accounts[
         updatedMovement.index

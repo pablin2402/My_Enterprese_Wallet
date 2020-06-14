@@ -191,6 +191,7 @@ export default {
         this.reset();
       }
     },
+
     generateNewId() {
       const numberOfMovements = this.accounts[this.selectedMovement.index].info
         .length;
@@ -225,6 +226,7 @@ export default {
         index: this.selectedMovement.index
       });
     },
+
     reset() {
       this.$refs.form.reset();
       this.$emit("close");

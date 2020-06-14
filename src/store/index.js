@@ -130,20 +130,43 @@ export default new Vuex.Store({
     },
     updateAccountBudget({ commit }, updatedAmountObject) {
       commit("updateAccountBudget", updatedAmountObject);
+    },
+    addMovementToOtherAccount({ commit }, newMovementToAccount) {
+      commit("movementToOtherAccount", newMovementToAccount);
     }
   },
 
   mutations: {
+    movementToOtherAccount(state, newMovementToAccount) {
+      state.accounts[newMovementToAccount.index].info.push({
+        id: newMovementToAccount.id,
+        name: newMovementToAccount.name,
+        category: newMovementToAccount.category,
+        amount: newMovementToAccount.amount,
+        type: newMovementToAccount.type,
+        toaccount: newMovementToAccount.toaccount,
+        date: newMovementToAccount.date
+      });
+    },
+    addMovement(state, newMovement) {
+      state.accounts[newMovement.index].info.push({
+        id: newMovement.id,
+        name: newMovement.name,
+        category: newMovement.category,
+        amount: newMovement.amount,
+        type: newMovement.type,
+        toaccount: newMovement.toaccount,
+        date: newMovement.date
+      });
+    },
     mutateTransfertList(state, transfer) {
       state.accounts.info.push(transfer);
     },
     mutateUpdate(state, upTransfer) {
-      let upload;
-      state.accounts.info.find(trans => trans.name === upTransfer.name);
-      upload = state.accounts.info.indexOf(this.trans);
-      if (this.trans !== null) {
-        state.accounts.info.splice(upload, 1, upTransfer);
-      }
+      const foudAccountIndex = state.accounts.findIndex(
+        account => account.name === upTransfer.name
+      );
+      state.accounts[foudAccountIndex].totalAmount = upTransfer.amount;
     },
     mutateCategoryList(state, category) {
       state.categories.push(category);
@@ -154,6 +177,7 @@ export default new Vuex.Store({
       account.code = "account-" + aux2;
       state.accounts.push(account);
     },
+
     mutateUpdateAccount(state, codeName) {
       const foudAccountIndex = state.accounts.findIndex(
         account => account.code === codeName.code
@@ -172,16 +196,7 @@ export default new Vuex.Store({
         alert("Can't delete this account");
       }
     },
-    addMovement(state, newMovement) {
-      state.accounts[newMovement.index].info.push({
-        id: newMovement.id,
-        name: newMovement.name,
-        category: newMovement.category,
-        amount: newMovement.amount,
-        type: newMovement.type,
-        date: newMovement.date
-      });
-    },
+
     updateMovement(state, updatedMovement) {
       const foundAccountIndex = state.accounts[
         updatedMovement.index

@@ -23,15 +23,10 @@
             depressed
             color="#F2F2F2"
             width="100px"
-            @click.stop="dialog2 = true"
+            @click="sendDataTransfer(selectedMovement, true)"
           >
             <v-icon left small>mdi-bank-transfer</v-icon>
             <span class="caption text-lowercase">Transfer</span>
-            <Transfer
-              :visible="dialog2"
-              :account="accountname"
-              @close="dialog2 = false"
-            ></Transfer>
           </v-btn>
         </v-flex>
         <v-flex md1 class="pt-6">
@@ -98,6 +93,14 @@
         </v-layout>
       </v-card>
       <v-divider></v-divider>
+      <Transfer
+        :dialog2="dialog2"
+        :selectedMovement="selectedMovement"
+        :newMovement="newMovement"
+        :account="accountIndex"
+        @close="dialog2 = false"
+      ></Transfer>
+
       <Movement
         :dialog="dialog"
         :selectedMovement="selectedMovement"
@@ -178,6 +181,14 @@ export default {
       this.accountIndex = this.accounts.findIndex(
         account => account.name === this.accountname
       );
+    },
+    sendDataTransfer(selectedMovement, newMovement) {
+      this.selectedMovement = {
+        ...selectedMovement,
+        index: this.accountIndex
+      };
+      this.dialog2 = true;
+      this.newMovement = newMovement;
     },
     sendData(selectedMovement, newMovement) {
       if (!newMovement && selectedMovement.category === "transfer") {

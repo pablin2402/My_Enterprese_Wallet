@@ -50,6 +50,7 @@
                 label="Filter by Date"
                 prepend-icon="mdi-calendar-range"
                 v-on="on"
+                v-model="date"
               ></v-text-field>
             </template>
             <v-date-picker
@@ -60,42 +61,53 @@
           </v-menu>
         </v-flex>
         <v-flex md3>
-          <v-select :items="categories" label="Filter by category"></v-select>
+          <v-select
+            :items="categories"
+            label="Filter by category"
+            v-model="categorieSelect"
+          ></v-select>
         </v-flex>
       </v-layout>
       <v-divider></v-divider>
-      <v-card color="#F2F2F2" flat v-for="data in info" :key="data.id">
-        <v-layout
-          row
-          wrap
-          justify-space-around
-          :class="`pa-3 data ${data.type}`"
-        >
-          <v-flex md3>
-            <div class="caption grey--text">Name</div>
-            <div>{{ data.name }}</div>
-          </v-flex>
-          <v-flex md3>
-            <div class="caption grey--text">Category</div>
-            <div>{{ data.category }}</div>
-          </v-flex>
-          <v-flex md2>
-            <div class="caption grey--text">Amount</div>
-            <div>{{ data.amount }} Bs.</div>
-          </v-flex>
-          <v-flex md2>
-            <v-btn small :type="data.type" @click="deleteMovement(data)">
-              <v-icon>mdi-trash-can-outline</v-icon>
-              <span>Delete</span>
-            </v-btn>
-          </v-flex>
-          <v-flex md2>
-            <v-btn small @click="sendData(data, false)">
-              <v-icon>mdi-pencil-outline</v-icon>
-              <span>Update</span>
-            </v-btn>
-          </v-flex>
-        </v-layout>
+      <v-card
+        color="#F2F2F2"
+        flat
+        v-for="data in filterList"
+        :key="/*data.id,*/ (data.categorieSelect, data.date)"
+      >
+        <div>
+          <v-layout
+            row
+            wrap
+            justify-space-around
+            :class="`pa-3 data ${data.type}`"
+          >
+            <v-flex md3>
+              <div class="caption grey--text">Name</div>
+              <div>{{ data.name }}</div>
+            </v-flex>
+            <v-flex md3>
+              <div class="caption grey--text">Category</div>
+              <div>{{ data.category }}</div>
+            </v-flex>
+            <v-flex md2>
+              <div class="caption grey--text">Amount</div>
+              <div>{{ data.amount }} Bs.</div>
+            </v-flex>
+            <v-flex md2>
+              <v-btn small :type="data.type" @click="deleteMovement(data)">
+                <v-icon>mdi-trash-can-outline</v-icon>
+                <span>Delete</span>
+              </v-btn>
+            </v-flex>
+            <v-flex md2>
+              <v-btn small @click="sendData(data, false)">
+                <v-icon>mdi-pencil-outline</v-icon>
+                <span>Update</span>
+              </v-btn>
+            </v-flex>
+          </v-layout>
+        </div>
       </v-card>
       <v-divider></v-divider>
       <Movement
@@ -127,7 +139,10 @@ export default {
       accountname: "",
       accountIndex: "",
       selectedMovement: {},
-      newMovement: false
+      newMovement: false,
+      categorieSelect: "",
+      infoArray: [],
+      dateArray: []
     };
   },
   computed: {
@@ -150,8 +165,32 @@ export default {
           categoriesArray.push([this.categoriesObject[i].name]);
         }
       }
-
       return categoriesArray;
+    },
+    categoriesList() {
+      const infoArray = [];
+      let infoAccount = [];
+      infoAccount = this.accounts[this.accountIndex].info;
+      for (let i = 0; i < infoAccount.length; i++) {
+        if (
+          this.accounts[this.accountIndex].info[i].category ===
+          this.categorieSelect[0]
+        ) {
+          infoArray[i] = this.accounts[this.accountIndex].info[i];
+        }
+      }
+      return infoArray;
+    },
+    dateList() {
+      const dateArray = [];
+      let infoAccount = [];
+      infoAccount = this.accounts[this.accountIndex].info;
+      for (let i = 0; i < infoAccount.length; i++) {
+        if (this.accounts[this.accountIndex].info[i].date === this.date[0]) {
+          dateArray[i] = this.accounts[this.accountIndex].info[i];
+        }
+      }
+      return dateArray;
     },
     info() {
       return this.accounts[this.accountIndex].info;
@@ -170,6 +209,22 @@ export default {
         index: this.accountIndex
       });
       return currentBudget;
+    },
+    filterList() {
+      let filtered =
+        this.categorieSelect[0] === undefined
+          ? this.info
+          : this.categoriesList.filter(item => {
+              return item.category === this.categorieSelect[0];
+            });
+      filtered =
+        this.date === undefined
+          ? filtered
+          : this.dateList.filter(item => {
+              return item.date === this.date;
+            });
+      console.log(this.date);
+      return filtered;
     }
   },
   methods: {

@@ -173,7 +173,7 @@ export default new Vuex.Store({
     },
     mutateCreateAccount(state, account) {
       const foudAccountIndex = state.accounts.findIndex(
-        accountFind => accountFind.code === account.code
+        accountFind => accountFind.name === account.name
       );
       if (state.accounts[foudAccountIndex] == null) {
         var aux = state.accounts[state.accounts.length - 1].code.split("-");
@@ -187,9 +187,17 @@ export default new Vuex.Store({
 
     mutateUpdateAccount(state, codeName) {
       const foudAccountIndex = state.accounts.findIndex(
-        account => account.code === codeName.code
+        account =>
+          account.name === codeName.name && account.code !== codeName.code
       );
-      state.accounts[foudAccountIndex].name = codeName.name;
+      if (state.accounts[foudAccountIndex] == null) {
+        const foudAccountIndex2 = state.accounts.findIndex(
+          account => account.code === codeName.code
+        );
+        state.accounts[foudAccountIndex2].name = codeName.name;
+      } else {
+        alert("Yout can´t repeate an account name");
+      }
     },
     mutateDeleteAccount(state, code) {
       const foudAccountIndex = state.accounts.findIndex(

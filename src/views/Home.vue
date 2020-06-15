@@ -33,9 +33,6 @@
               }"
             >
               <v-card-title>
-                <div class="subheading">{{ account.code }}</div>
-              </v-card-title>
-              <v-card-title>
                 <div class="subheading">{{ account.name }}</div>
               </v-card-title>
             </router-link>
@@ -125,10 +122,18 @@ export default {
       this.deleteAccount(code);
     },
     updaaccount(codeName) {
-      this.updateAccount(codeName);
+      if (codeName.name == "") {
+        alert("The name can´t be empty");
+      } else {
+        this.updateAccount(codeName);
+      }
     },
     creaaccount(newAccount) {
-      this.createAccount(newAccount);
+      if (newAccount.name == "") {
+        alert("The name can´t be empty");
+      } else {
+        this.createAccount(newAccount);
+      }
     },
     closeDelete() {
       this.dialogDelete = false;

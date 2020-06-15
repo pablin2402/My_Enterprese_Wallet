@@ -35,12 +35,16 @@
           </v-btn>
         </v-flex>
         <v-flex md1 class="pt-6">
-          <router-link to="/categories">
-            <v-btn small depressed color="#F2F2F2" width="100px">
-              <v-icon left small>mdi-clipboard-list-outline</v-icon>
-              <span class="caption text-lowercase">Categories</span>
-            </v-btn>
-          </router-link>
+          <v-btn
+            small
+            depressed
+            color="#F2F2F2"
+            width="100px"
+            @click="redirectToCategories()"
+          >
+            <v-icon left small>mdi-clipboard-list-outline</v-icon>
+            <span class="caption text-lowercase">Categories</span>
+          </v-btn>
         </v-flex>
         <v-flex md3>
           <v-menu ref="menu1" :close-on-content-click="true">
@@ -173,6 +177,9 @@ export default {
     }
   },
   methods: {
+    redirectToCategories() {
+      this.$router.push("/categories");
+    },
     findAccountIndex() {
       this.accountname = this.$route.params.id;
       this.accountIndex = this.accounts.findIndex(

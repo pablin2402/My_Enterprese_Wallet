@@ -8,13 +8,16 @@
         <v-text-field v-model="name" label="Name" required></v-text-field>
       </v-col>
       <v-spacer></v-spacer>
-      <v-btn color="blue darken-1" text @click.stop="show = false"
-        >Cancel</v-btn
-      >
       <v-btn
         color="blue darken-1"
         text
-        @click.stop="creaaccount(), (show = false)"
+        @click.stop="
+          show = false;
+          name = '';
+        "
+        >Cancel</v-btn
+      >
+      <v-btn color="blue darken-1" text @click.stop="creaaccount(name)"
         >Create</v-btn
       >
     </v-card>
@@ -33,15 +36,19 @@ export default {
     };
   },
   methods: {
-    creaaccount() {
-      this.$emit("creaaccount", {
-        code: "",
-        name: this.name,
-        totalAmount: 0,
-        info: []
-      });
-      this.code = "";
-      this.name = "";
+    creaaccount(name) {
+      if (name == "") {
+        alert("The name can´t be empty");
+      } else {
+        this.$emit("creaaccount", {
+          code: "",
+          name: name,
+          totalAmount: 0,
+          info: []
+        });
+        this.name = "";
+        this.show = false;
+      }
     },
     closeDialog() {
       this.$emit("close-create");

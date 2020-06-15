@@ -172,10 +172,17 @@ export default new Vuex.Store({
       state.categories.push(category);
     },
     mutateCreateAccount(state, account) {
-      var aux = state.accounts[state.accounts.length - 1].code.split("-");
-      var aux2 = Number(aux[1]) + 1;
-      account.code = "account-" + aux2;
-      state.accounts.push(account);
+      const foudAccountIndex = state.accounts.findIndex(
+        accountFind => accountFind.code === account.code
+      );
+      if (state.accounts[foudAccountIndex] == null) {
+        var aux = state.accounts[state.accounts.length - 1].code.split("-");
+        var aux2 = Number(aux[1]) + 1;
+        account.code = "account-" + aux2;
+        state.accounts.push(account);
+      } else {
+        alert("Yout can´t repeate an account name");
+      }
     },
 
     mutateUpdateAccount(state, codeName) {

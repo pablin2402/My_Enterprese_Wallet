@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog" persistent max-width="600px">
     <v-card>
       <v-card-title>
-        <span class="headline">Movimiento</span>
+        <span id="move" class="headline">Movimiento</span>
       </v-card-title>
       <v-card-text>
         <v-container>

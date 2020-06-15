@@ -30,13 +30,7 @@
           </v-btn>
         </v-flex>
         <v-flex md1 class="pt-6">
-          <v-btn
-            small
-            depressed
-            color="#F2F2F2"
-            width="100px"
-            @click="redirectToCategories()"
-          >
+          <v-btn small depressed color="#F2F2F2" width="100px" @click="redirectToCategories()">
             <v-icon left small>mdi-clipboard-list-outline</v-icon>
             <span class="caption text-lowercase">Categories</span>
           </v-btn>
@@ -51,11 +45,7 @@
                 v-on="on"
               ></v-text-field>
             </template>
-            <v-date-picker
-              no-title
-              @input="menu1 = true"
-              v-model="selectedDate"
-            ></v-date-picker>
+            <v-date-picker no-title @input="menu1 = true" v-model="selectedDate"></v-date-picker>
           </v-menu>
         </v-flex>
         <v-flex md3>
@@ -64,12 +54,7 @@
       </v-layout>
       <v-divider></v-divider>
       <v-card color="#F2F2F2" flat v-for="data in info" :key="data.id">
-        <v-layout
-          row
-          wrap
-          justify-space-around
-          :class="`pa-3 data ${data.type}`"
-        >
+        <v-layout row wrap justify-space-around :class="`pa-3 data ${data.type}`">
           <v-flex md3>
             <div class="caption grey--text">Name</div>
             <div>{{ data.name }}</div>
@@ -103,6 +88,7 @@
         :newMovement="newMovement"
         :account="accountIndex"
         @close="dialog2 = false"
+        @addTransfer="addTransfer"
       ></Transfer>
 
       <Movement
@@ -116,7 +102,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import Transfer from "../components/Transfer";
 import Movement from "../components/Movement";
 
@@ -196,6 +182,20 @@ export default {
       };
       this.dialog2 = true;
       this.newMovement = newMovement;
+    },
+    ...mapActions(["addMovement"]),
+
+    addTransfer(newAccount) {
+      this.addMovement(newAccount, {
+        id: newAccount.id,
+        name: newAccount.name,
+        category: newAccount.category,
+        amount: newAccount.amount,
+        type: newAccount.type,
+        toaccount: newAccount.toaccount,
+        date: newAccount.date,
+        index: newAccount.index
+      });
     },
     sendData(selectedMovement, newMovement) {
       if (!newMovement && selectedMovement.category === "transfer") {

@@ -133,7 +133,7 @@ export default {
       dialog: false,
       dialog2: false,
       accountname: "",
-      accountIndex: "",
+      accountIndex: null,
       selectedMovement: {},
       newMovement: false
     };
@@ -163,30 +163,34 @@ export default {
     },
     info() {
       //return this.accounts[this.accountIndex].info;
-      if (this.$route.params.id){
-      const accountname = this.$route.params.id;
-      const accountIndex = this.accounts.findIndex(
-        account => account.name === accountname
-      );
-      return this.accounts[accountIndex].info;
-      }else{
+      if (this.$route.params.id) {
+        const accountname = this.$route.params.id;
+        const accountIndex = this.accounts.findIndex(
+          account => account.name === accountname
+        );
+        return this.accounts[accountIndex].info;
+      } else {
         return [];
       }
-      
     },
     budget() {
       let currentBudget = 0;
-      this.info.forEach(movement => {
-        if (movement.type === "income") {
-          currentBudget += parseInt(movement.amount);
-        } else {
-          currentBudget -= parseInt(movement.amount);
-        }
-      });
-      this.$store.dispatch("updateAccountBudget", {
-        amount: currentBudget,
-        index: this.accountIndex
-      });
+      if (this.info.length !== 0) {
+        this.info.forEach(movement => {
+          if (movement.type === "income") {
+            currentBudget += parseInt(movement.amount);
+          } else {
+            currentBudget -= parseInt(movement.amount);
+          }
+        });
+        console.log(
+          `CalculatedBudget: ${currentBudget} for ${this.accountIndex}`
+        );
+        this.$store.dispatch("updateAccountBudget", {
+          amount: currentBudget,
+          index: this.accountIndex
+        });
+      }
       return currentBudget;
     }
   },
@@ -242,16 +246,18 @@ export default {
         this.budget - parseInt(deletedMovement.amount) < 0
       ) {
         alert("You cant delete this income");
+      } else if (deletedMovement.type === "trasfer") {
+        alert("You cant delete a transfer type movement");
       } else {
-        const response = confirm(
+        /*const response = confirm(
           `Are you sure you want to delete ${deletedMovement.name}`
         );
-        if (response) {
-          this.$store.dispatch("deleteMovement", {
-            ...deletedMovement,
-            index: this.accountIndex
-          });
-        }
+        if (response) {*/
+        this.$store.dispatch("deleteMovement", {
+          ...deletedMovement,
+          index: this.accountIndex
+        });
+        //}
       }
     },
     updateBudget() {

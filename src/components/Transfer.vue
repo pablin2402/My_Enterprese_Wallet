@@ -95,7 +95,9 @@ export default {
       },
       checkBudget() {
         var budget = this.accountsObject[this.account].totalAmount;
-        console.log(budget + this.initialMovementAmount);
+        console.log(
+          budget + this.initialMovementAmount + "Index: " + this.account
+        );
         return value =>
           value <= budget + this.initialMovementAmount ||
           `Expense must be less than the remaining budget: ${budget +

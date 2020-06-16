@@ -18,11 +18,13 @@ describe("Transfer", () => {
     const vuetify = new Vuetify();
     localVue.use(VueRouter);
     const router = new VueRouter({
-      routes: [{
-        path: "/customAccount/:id",
-        name: "CustomAccount",
-        component: CustomAccount
-      }]
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
     });
     const wrapper = mount(Home, {
       store,
@@ -43,11 +45,13 @@ describe("Transfer", () => {
     localVue.use(VueRouter);
 
     const router = new VueRouter({
-      routes: [{
-        path: "/customAccount/:id",
-        name: "CustomAccount",
-        component: CustomAccount
-      }]
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
     });
     const vuetify = new Vuetify();
 
@@ -73,11 +77,13 @@ describe("Transfer", () => {
     localVue.use(VueRouter);
 
     const router = new VueRouter({
-      routes: [{
-        path: "/customAccount/:id",
-        name: "CustomAccount",
-        component: CustomAccount
-      }]
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
     });
     const vuetify = new Vuetify();
     const wrapper = mount(Home, {

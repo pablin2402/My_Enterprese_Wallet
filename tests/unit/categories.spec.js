@@ -69,4 +69,3 @@ describe("Categories Module", () => {
     assert.strictEqual(list.at(5).text(), "newCat3");
   });
 });
-

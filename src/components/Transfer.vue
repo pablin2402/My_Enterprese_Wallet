@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog2" persistent max-width="600px">
     <v-card>
       <v-card-title>
-        <span class="headline">Transfer</span>
+        <span id="title" class="headline">Transfer</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -15,7 +15,7 @@
               </v-col>
               <v-col cols="12">
                 <v-text-field
-                  v-model="selectedMovement.name"
+                  v-model="name"
                   autocomplete="off"
                   label="Name of the transfer"
                   counter="20"
@@ -29,7 +29,7 @@
                 <br />
 
                 <v-select
-                  v-model="selectedMovement.toaccount"
+                  v-model="toaccount"
                   :items="getAccounts"
                   :rules="[v => !!v || 'Account is required']"
                   label="Account"
@@ -39,7 +39,7 @@
 
               <v-col cols="12">
                 <v-text-field
-                  v-model.number="selectedMovement.amount"
+                  v-model.number="amount"
                   label="Amount"
                   prefix="$"
                   counter="5"
@@ -77,6 +77,9 @@ export default {
   components: {},
   data() {
     return {
+      name: "",
+      toaccount: "",
+      amount: "",
       valid: true,
       initialMovementAmount: 0,
 
@@ -91,8 +94,7 @@ export default {
           `${propertyType} must be less than ${maxLength} characters`;
       },
       checkBudget() {
-        var budget = this.accountsObject[this.selectedMovement.index]
-          .totalAmount;
+        var budget = this.accountsObject[this.account].totalAmount;
         console.log(budget + this.initialMovementAmount);
         return value =>
           value <= budget + this.initialMovementAmount ||
@@ -114,15 +116,23 @@ export default {
       if (this.$refs.form.validate()) {
         let confirmation = confirm(
           "Are you sure you want to debit the amount of " +
-            this.selectedMovement.amount +
+            this.amount +
             " from your savings bank " +
-            this.accountsObject[this.selectedMovement.index].name +
+            this.accountsObject[this.account].name +
             " and change it to the saving bank " +
-            this.selectedMovement.toaccount
+            this.toaccount
         );
         if (confirmation) {
-          this.addTransfer();
-          //this.addTransferToOtherAccount();
+          this.$emit("addTransfer", {
+            id: this.generateNewId(),
+            name: this.name,
+            category: this.generateCategory(),
+            amount: this.amount,
+            type: this.generateType(),
+            toaccount: this.toaccount,
+            date: this.getCurrentDate(),
+            index: this.account
+          });
           this.uploadMyAmount();
           this.uploadAmount();
           this.reset();
@@ -132,24 +142,23 @@ export default {
         }
       }
     },
+
     uploadMyAmount() {
       let totalbadge = 0;
-      totalbadge = this.getAmount(this.selectedMovement.toaccount);
+      totalbadge = this.getAmount(this.toaccount);
 
       this.$store.dispatch("updateTransfer", {
-        amount: this.selectedMovement.amount + totalbadge,
-        name: this.selectedMovement.toaccount
+        amount: this.amount + totalbadge,
+        name: this.toaccount
       });
-      //  this.reset();
     },
     uploadAmount() {
       let total = 0;
       total =
-        this.getAmount(this.accountsObject[this.selectedMovement.index].name) -
-        this.selectedMovement.amount;
+        this.getAmount2(this.accountsObject[this.account].name) - this.amount;
       this.$store.dispatch("updateTransfer", {
         amount: total,
-        name: this.accountsObject[this.selectedMovement.index].name
+        name: this.accountsObject[this.account].name
       });
     },
     getAmount(no) {
@@ -162,43 +171,18 @@ export default {
       console.log(this.accountsObject[nt].totalAmount);
       return this.accountsObject[nt].totalAmount;
     },
-    addTransferToOtherAccount() {
-      this.generateTypeIncome(),
-        this.generateNewId(),
-        this.getCurrentDate(),
-        this.generateCategory(),
-        this.codeTransfer(),
-        this.$store.dispatch(
-          "addMovementToOtherAccount",
-          this.selectedMovement
-        );
-    },
-    addTransfer() {
-      this.generateType(),
-        this.generateNewId(),
-        this.getCurrentDate(),
-        this.generateCategory(),
-        this.$store.dispatch("addMovement", this.selectedMovement);
-    },
     generateType() {
       const type = "expense";
-      return (this.selectedMovement.type = `${type}`);
+      return type;
     },
-    codeTransfer() {
-      const id_To = this.getIdAmountToCreate(this.selectedMovement.toaccount);
-      return this.selectedMovement.code == `${id_To}`;
-    },
-    generateTypeIncome() {
-      const type = "income";
-      return (this.selectedMovement.type = `${type}`);
-    },
+
     generateCategory() {
       const type = "transfer";
-      return (this.selectedMovement.category = `${type}`);
+      return type;
     },
     generateNewId() {
       let id = +new Date() + "-" + Math.floor(Math.random() * 1000);
-      return (this.selectedMovement.id = "TRANSFER " + "-" + `${id}`);
+      return "TRANSFER " + "-" + id;
     },
 
     getIdAmountToCreate(no) {
@@ -218,12 +202,9 @@ export default {
       const mm = String(today.getMonth() + 1).padStart(2, "0");
       const yyyy = today.getFullYear();
 
-      return (this.selectedMovement.date = `${yyyy}-${mm}-${dd}`);
+      return yyyy - mm - dd;
     },
-    infoAccountMovement() {
-      const nameAccount = this.accounts[this.getIdAmountToCreate()].info;
-      return nameAccount;
-    },
+
     reset() {
       this.$refs.form.reset();
       this.$emit("close");
@@ -274,7 +255,11 @@ export default {
     getAccounts() {
       let accountsArray = [];
       for (let i = 0; i < this.accountsObject.length; i++) {
-        accountsArray.push(this.accountsObject[i].name);
+        if (
+          this.accountsObject[this.account].name !== this.accountsObject[i].name
+        ) {
+          accountsArray.push(this.accountsObject[i].name);
+        }
       }
       return accountsArray;
     },

@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <v-container class="my-10" grid-list-md>
-      <h1>My Enterprise Wallet</h1>
+      <h1 id="title">My Enterprise Wallet</h1>
       <br />
       <v-flex md1 class="pt-6">
         <v-btn
@@ -48,6 +48,7 @@
             </router-link>
             <v-card-actions>
               <v-btn
+                id="delete"
                 color="red"
                 text
                 @click.stop="
@@ -57,6 +58,7 @@
                 >Delete</v-btn
               >
               <v-btn
+                id="update"
                 text
                 @click="
                   openUpdateDialog(account);

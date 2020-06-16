@@ -103,6 +103,7 @@
         :newMovement="newMovement"
         :account="accountIndex"
         @close="dialog2 = false"
+        @addTransfer="addTransfer"
       ></Transfer>
 
       <Movement
@@ -116,7 +117,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import Transfer from "../components/Transfer";
 import Movement from "../components/Movement";
 
@@ -196,6 +197,20 @@ export default {
       };
       this.dialog2 = true;
       this.newMovement = newMovement;
+    },
+    ...mapActions(["addMovement"]),
+
+    addTransfer(newAccount) {
+      this.addMovement(newAccount, {
+        id: newAccount.id,
+        name: newAccount.name,
+        category: newAccount.category,
+        amount: newAccount.amount,
+        type: newAccount.type,
+        toaccount: newAccount.toaccount,
+        date: newAccount.date,
+        index: newAccount.index
+      });
     },
     sendData(selectedMovement, newMovement) {
       if (!newMovement && selectedMovement.category === "transfer") {

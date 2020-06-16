@@ -2,7 +2,7 @@
   <v-dialog v-model="dialog2" persistent max-width="600px">
     <v-card>
       <v-card-title>
-        <span class="headline">Transfer</span>
+        <span id="title" class="headline">Transfer</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -61,7 +61,9 @@
 
         <v-btn color="warning" text @click="reset">Cancel</v-btn>
 
-        <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer">Save</v-btn>
+        <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

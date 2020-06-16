@@ -1,23 +1,25 @@
 import { assert } from "chai";
 import { mount, createLocalVue } from "@vue/test-utils";
 import Categories from "@/views/Categories.vue";
+import CategoryDialog from "@/components/CategoryDialog.vue";
 
 import Vuex from "vuex";
 import Vuetify from "vuetify";
-
-//import { categoriesList } from "./mockStore";
 import store from "@/store";
 
 describe("Categories Module", () => {
-  it("Default categories", () => {
-    const localVue = createLocalVue();
+  let localVue;
+  let vuetify;
 
+  beforeEach(() => {
+    localVue = createLocalVue();
     localVue.use(Vuex);
     localVue.use(Vuetify);
 
-    const vuetify = new Vuetify();
-
-    const wrapper = mount(Categories, {
+    vuetify = new Vuetify();
+  });
+  it("Default categories", () => {
+    const wrapper = mount(CategoryDialog, {
       store,
       vuetify,
       localVue
@@ -28,14 +30,11 @@ describe("Categories Module", () => {
   });
 
   it("Don't add any category if name and type are not filled", () => {
-    const localVue = createLocalVue();
+    global.alert = message => {
+      console.log(message);
+    };
 
-    localVue.use(Vuex);
-    localVue.use(Vuetify);
-
-    const vuetify = new Vuetify();
-
-    const wrapper = mount(Categories, {
+    const wrapper = mount(CategoryDialog, {
       store,
       vuetify,
       localVue
@@ -51,22 +50,23 @@ describe("Categories Module", () => {
     assert.equal(categories.length, expectedLength);
   });
   it("Rendering categories list after adding a new one", async () => {
-    const localVue = createLocalVue();
-
-    localVue.use(Vuex);
-    localVue.use(Vuetify);
-
-    const vuetify = new Vuetify();
-
     const wrapper = mount(Categories, {
       store,
       vuetify,
-      localVue
+      localVue,
+      stubs: {
+        CategoryDialog
+      }
     });
 
-    wrapper.vm.addNewCategory("income", "newCat3");
+    await wrapper.vm.$store.dispatch("addCategory", {
+      code: "cat-6",
+      type: "income",
+      name: "newCat3"
+    });
     await wrapper.vm.$forceUpdate();
     const list = wrapper.findAll(".list-name");
     assert.strictEqual(list.at(5).text(), "newCat3");
   });
 });
+

@@ -9,7 +9,7 @@ import store from "@/store";
 import Home from "@/views/Home.vue";
 import CustomAccount from "@/views/CustomAccount.vue";
 
-describe("Transfer", () => {
+describe("TransferHome", () => {
   it("buttonDeleteandUpdateExists", () => {
     const localVue = createLocalVue();
     localVue.use(Vuex);
@@ -18,11 +18,13 @@ describe("Transfer", () => {
     const vuetify = new Vuetify();
     localVue.use(VueRouter);
     const router = new VueRouter({
-      routes: [{
-        path: "/customAccount/:id",
-        name: "CustomAccount",
-        component: CustomAccount
-      }]
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
     });
     const wrapper = mount(Home, {
       store,
@@ -43,11 +45,13 @@ describe("Transfer", () => {
     localVue.use(VueRouter);
 
     const router = new VueRouter({
-      routes: [{
-        path: "/customAccount/:id",
-        name: "CustomAccount",
-        component: CustomAccount
-      }]
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
     });
     const vuetify = new Vuetify();
 
@@ -73,11 +77,13 @@ describe("Transfer", () => {
     localVue.use(VueRouter);
 
     const router = new VueRouter({
-      routes: [{
-        path: "/customAccount/:id",
-        name: "CustomAccount",
-        component: CustomAccount
-      }]
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
     });
     const vuetify = new Vuetify();
     const wrapper = mount(Home, {
@@ -91,22 +97,4 @@ describe("Transfer", () => {
     wrapper.vm.deleaccount("account-3");
     assert.equal(wrapper.vm.accounts.length, expectedlength);
   });
-  /*
-  it("Default transfer", () => {
-    const localVue = createLocalVue();
-    const expectedTitle = "Transfer";
-    localVue.use(Vuex);
-    localVue.use(Vuetify);
-
-    const vuetify = new Vuetify();
-
-    const wrapper = mount(Transfer, {
-      store,
-      vuetify,
-      localVue
-    });
-    const titleInComponent = wrapper.find("#title");
-
-    assert.equal(titleInComponent.text(), expectedTitle);
-  });*/
 });

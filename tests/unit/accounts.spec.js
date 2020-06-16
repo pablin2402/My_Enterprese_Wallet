@@ -19,11 +19,13 @@ describe("Accounts Module", () => {
 
     const vuetify = new Vuetify();
     const router = new VueRouter({
-      routes: [{
-        path: "/customAccount/:id",
-        name: "CustomAccount",
-        component: CustomAccount
-      }]
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
     });
     global.alert = message => {
       console.log(message);
@@ -52,12 +54,15 @@ describe("Accounts Module", () => {
     localVue.use(VueRouter);
 
     const router = new VueRouter({
-      routes: [{
-        path: "/customAccount/:id",
-        name: "CustomAccount",
-        component: CustomAccount
-      }]
-    }); const vuetify = new Vuetify();
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
+    });
+    const vuetify = new Vuetify();
 
     const wrapper = mount(Accounts, {
       store,
@@ -93,11 +98,13 @@ describe("Accounts Module", () => {
     localVue.use(VueRouter);
 
     const router = new VueRouter({
-      routes: [{
-        path: "/customAccount/:id",
-        name: "CustomAccount",
-        component: CustomAccount
-      }]
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
     });
     const vuetify = new Vuetify();
 

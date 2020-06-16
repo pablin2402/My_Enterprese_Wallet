@@ -30,13 +30,7 @@
           </v-btn>
         </v-flex>
         <v-flex md1 class="pt-6">
-          <v-btn
-            small
-            depressed
-            color="#F2F2F2"
-            width="100px"
-            @click="redirectToCategories()"
-          >
+          <v-btn small depressed color="#F2F2F2" width="100px" @click="redirectToCategories()">
             <v-icon left small>mdi-clipboard-list-outline</v-icon>
             <span class="caption text-lowercase">Categories</span>
           </v-btn>
@@ -51,19 +45,11 @@
                 v-on="on"
               ></v-text-field>
             </template>
-            <v-date-picker
-              no-title
-              @input="menu1 = true"
-              v-model="selectedDate"
-            ></v-date-picker>
+            <v-date-picker no-title @input="menu1 = true" v-model="selectedDate"></v-date-picker>
           </v-menu>
         </v-flex>
         <v-flex md3>
-          <v-select
-            :items="categories"
-            label="Filter by category"
-            v-model="categorieSelect"
-          ></v-select>
+          <v-select :items="categories" label="Filter by category" v-model="categorieSelect"></v-select>
         </v-flex>
       </v-layout>
       <v-divider></v-divider>
@@ -74,12 +60,7 @@
         :key="/*data.id,*/ (data.categorieSelect, data.selectedDate)"
       >
         <div>
-          <v-layout
-            row
-            wrap
-            justify-space-around
-            :class="`pa-3 data ${data.type}`"
-          >
+          <v-layout row wrap justify-space-around :class="`pa-3 data ${data.type}`">
             <v-flex md3>
               <div class="caption grey--text">Name</div>
               <div>{{ data.name }}</div>

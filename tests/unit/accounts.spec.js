@@ -1,6 +1,8 @@
 import { assert } from "chai";
 import { mount, createLocalVue } from "@vue/test-utils";
 import Accounts from "@/views/Home.vue";
+import VueRouter from "vue-router";
+import CustomAccount from "@/views/CustomAccount.vue";
 
 import Vuex from "vuex";
 import Vuetify from "vuetify";
@@ -13,11 +15,22 @@ describe("Accounts Module", () => {
 
     localVue.use(Vuex);
     localVue.use(Vuetify);
+    localVue.use(VueRouter);
 
     const vuetify = new Vuetify();
-
+    const router = new VueRouter({
+      routes: [{
+        path: "/customAccount/:id",
+        name: "CustomAccount",
+        component: CustomAccount
+      }]
+    });
+    global.alert = message => {
+      console.log(message);
+    };
     const wrapper = mount(Accounts, {
       store,
+      router,
       vuetify,
       localVue
     });
@@ -27,14 +40,24 @@ describe("Accounts Module", () => {
   });
   it("Don't add any account if name is not filled", () => {
     const localVue = createLocalVue();
-
+    global.alert = message => {
+      console.log(message);
+    };
     localVue.use(Vuex);
     localVue.use(Vuetify);
+    localVue.use(VueRouter);
 
-    const vuetify = new Vuetify();
+    const router = new VueRouter({
+      routes: [{
+        path: "/customAccount/:id",
+        name: "CustomAccount",
+        component: CustomAccount
+      }]
+    }); const vuetify = new Vuetify();
 
     const wrapper = mount(Accounts, {
       store,
+      router,
       vuetify,
       localVue
     });
@@ -63,11 +86,20 @@ describe("Accounts Module", () => {
 
     localVue.use(Vuex);
     localVue.use(Vuetify);
+    localVue.use(VueRouter);
 
+    const router = new VueRouter({
+      routes: [{
+        path: "/customAccount/:id",
+        name: "CustomAccount",
+        component: CustomAccount
+      }]
+    });
     const vuetify = new Vuetify();
 
     const wrapper = mount(Accounts, {
       store,
+      router,
       vuetify,
       localVue
     });

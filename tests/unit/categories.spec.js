@@ -11,7 +11,9 @@ import store from "@/store";
 describe("Categories Module", () => {
   it("Default categories", () => {
     const localVue = createLocalVue();
-
+    global.alert = message => {
+      console.log(message);
+    };
     localVue.use(Vuex);
     localVue.use(Vuetify);
 

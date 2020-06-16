@@ -1,8 +1,8 @@
 <template>
   <div class="customAccount">
     <v-container class="my-10" grid-list-md>
-      <h1>Custom Account: {{ accounts[accountIndex].name }}</h1>
-      <h2>Saldo {{ accounts[accountIndex].totalAmount }} Bs.</h2>
+      <h1>Custom Account: {{ accountname }}</h1>
+      <h2>Saldo {{ budget }} Bs.</h2>
       <br />
       <v-layout row justify-space-around>
         <v-flex md1 class="pt-6">
@@ -30,7 +30,13 @@
           </v-btn>
         </v-flex>
         <v-flex md1 class="pt-6">
-          <v-btn small depressed color="#F2F2F2" width="100px" @click="redirectToCategories()">
+          <v-btn
+            small
+            depressed
+            color="#F2F2F2"
+            width="100px"
+            @click="redirectToCategories()"
+          >
             <v-icon left small>mdi-clipboard-list-outline</v-icon>
             <span class="caption text-lowercase">Categories</span>
           </v-btn>
@@ -45,7 +51,11 @@
                 v-on="on"
               ></v-text-field>
             </template>
-            <v-date-picker no-title @input="menu1 = true" v-model="selectedDate"></v-date-picker>
+            <v-date-picker
+              no-title
+              @input="menu1 = true"
+              v-model="selectedDate"
+            ></v-date-picker>
           </v-menu>
         </v-flex>
         <v-flex md3>
@@ -54,10 +64,15 @@
       </v-layout>
       <v-divider></v-divider>
       <v-card color="#F2F2F2" flat v-for="data in info" :key="data.id">
-        <v-layout row wrap justify-space-around :class="`pa-3 data ${data.type}`">
+        <v-layout
+          row
+          wrap
+          justify-space-around
+          :class="`pa-3 data ${data.type}`"
+        >
           <v-flex md3>
             <div class="caption grey--text">Name</div>
-            <div>{{ data.name }}</div>
+            <div class="movement-type">{{ data.name }}</div>
           </v-flex>
           <v-flex md3>
             <div class="caption grey--text">Category</div>
@@ -147,7 +162,17 @@ export default {
       return categoriesArray;
     },
     info() {
-      return this.accounts[this.accountIndex].info;
+      //return this.accounts[this.accountIndex].info;
+      if (this.$route.params.id){
+      const accountname = this.$route.params.id;
+      const accountIndex = this.accounts.findIndex(
+        account => account.name === accountname
+      );
+      return this.accounts[accountIndex].info;
+      }else{
+        return [];
+      }
+      
     },
     budget() {
       let currentBudget = 0;
@@ -170,10 +195,12 @@ export default {
       this.$router.push("/categories");
     },
     findAccountIndex() {
-      this.accountname = this.$route.params.id;
-      this.accountIndex = this.accounts.findIndex(
-        account => account.name === this.accountname
-      );
+      if (this.$route.params.id) {
+        this.accountname = this.$route.params.id;
+        this.accountIndex = this.accounts.findIndex(
+          account => account.name === this.accountname
+        );
+      }
     },
     sendDataTransfer(selectedMovement, newMovement) {
       this.selectedMovement = {

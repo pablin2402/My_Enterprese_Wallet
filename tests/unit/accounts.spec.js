@@ -39,6 +39,10 @@ describe("Accounts Module", () => {
     assert.equal(accounts.length, expectedLength);
   });
   it("Don't add any account if name is not filled", () => {
+    global.alert = message => {
+      console.log(message);
+    };
+
     const localVue = createLocalVue();
     global.alert = message => {
       console.log(message);

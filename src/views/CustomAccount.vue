@@ -1,7 +1,7 @@
 <template>
   <div class="customAccount">
     <v-container class="my-10" grid-list-md>
-      <h1>Custom Account: {{ accountname }}</h1>
+      <h1>Custom Account: {{ accountName }}</h1>
       <h2>Saldo {{ budget }} Bs.</h2>
       <br />
       <v-layout row justify-space-around>
@@ -132,7 +132,7 @@ export default {
       selectedDate: null,
       dialog: false,
       dialog2: false,
-      accountname: "",
+      accountName: "",
       accountIndex: null,
       selectedMovement: {},
       newMovement: false
@@ -164,11 +164,22 @@ export default {
     info() {
       //return this.accounts[this.accountIndex].info;
       if (this.$route.params.id) {
-        const accountname = this.$route.params.id;
-        const accountIndex = this.accounts.findIndex(
-          account => account.name === accountname
+        const accountName = this.$route.params.id;
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.accountIndex = this.accounts.findIndex(
+          account => account.name === accountName
         );
-        return this.accounts[accountIndex].info;
+        if (this.accountIndex !== -1) {
+          console.log(
+            `ACCOUNT-> Index found ${this.accountIndex} for ${accountName} this.accountIndex: ${this.accountIndex}`
+          );
+          return this.accounts[this.accountIndex].info;
+        } else {
+          console.log(
+            `ACCOUNT-> Index not found for ${accountName} this.accountIndex: ${this.accountIndex}`
+          );
+          return [];
+        }
       } else {
         return [];
       }
@@ -184,7 +195,7 @@ export default {
           }
         });
         console.log(
-          `CalculatedBudget: ${currentBudget} for ${this.accountIndex}`
+          `ACCOUNT-> CalculatedBudget: ${currentBudget} for ${this.accountIndex}`
         );
         this.$store.dispatch("updateAccountBudget", {
           amount: currentBudget,
@@ -199,10 +210,14 @@ export default {
       this.$router.push("/categories");
     },
     findAccountIndex() {
+      console.log(`ACCOUNT-> FINDACCOUNTINDEX`);
       if (this.$route.params.id) {
-        this.accountname = this.$route.params.id;
+        this.accountName = this.$route.params.id;
         this.accountIndex = this.accounts.findIndex(
-          account => account.name === this.accountname
+          account => account.name === this.accountName
+        );
+        console.log(
+          `ACCOUNT->FINDACCOUNTINDEX-> Found index ${this.accountIndex} for ${this.accountName}`
         );
       }
     },
@@ -249,15 +264,15 @@ export default {
       } else if (deletedMovement.type === "trasfer") {
         alert("You cant delete a transfer type movement");
       } else {
-        /*const response = confirm(
+        const response = confirm(
           `Are you sure you want to delete ${deletedMovement.name}`
         );
-        if (response) {*/
-        this.$store.dispatch("deleteMovement", {
-          ...deletedMovement,
-          index: this.accountIndex
-        });
-        //}
+        if (response) {
+          this.$store.dispatch("deleteMovement", {
+            ...deletedMovement,
+            index: this.accountIndex
+          });
+        }
       }
     },
     updateBudget() {

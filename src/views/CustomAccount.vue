@@ -55,6 +55,7 @@
               no-title
               @input="menu1 = true"
               v-model="selectedDate"
+              class="selectedDate_class"
             ></v-date-picker>
           </v-menu>
         </v-flex>
@@ -63,6 +64,7 @@
             :items="categories"
             label="Filter by category"
             v-model="categorieSelect"
+            class="categorieSelect_class"
           ></v-select>
         </v-flex>
       </v-layout>
@@ -70,8 +72,8 @@
       <v-card
         color="#F2F2F2"
         flat
-        v-for="data in filterOfFilter"
-        :key="/*data.id,*/ (data.categorieSelect, data.selectedDate)"
+        v-for="data in filterList"
+        :key="(data.categorieSelect, data.selectedDate)"
       >
         <div>
           <v-layout
@@ -243,15 +245,6 @@ export default {
           : this.categoriesList.filter(item => {
               return item.category === this.categorieSelect[0];
             });
-      /*filtered =
-        this.selectedDate === null
-          ? filtered
-          : this.filtered.filter(item => item.date === this.selectedDate);
-      console.log(this.selectedDate);*/
-      return filtered;
-    },
-    filterOfFilter() {
-      let filtered = this.filterList;
       filtered =
         this.selectedDate === null
           ? filtered

@@ -239,13 +239,19 @@ export default new Vuex.Store({
       };
     },
     deleteMovement(state, deletedMovement) {
+      console.log(`Delete: ${deletedMovement.id}`);
       state.accounts[deletedMovement.index].info = state.accounts[
         deletedMovement.index
       ].info.filter(account => account.id !== deletedMovement.id);
     },
     updateAccountBudget(state, updatedAmountObject) {
-      state.accounts[updatedAmountObject.index].totalAmount =
-        updatedAmountObject.amount;
+      if (updatedAmountObject.index) {
+        console.log(
+          `index mutate: ${updatedAmountObject.index} amount: ${updatedAmountObject.amount}`
+        );
+        state.accounts[updatedAmountObject.index].totalAmount =
+          updatedAmountObject.amount;
+      }
     }
   },
 

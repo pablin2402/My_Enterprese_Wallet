@@ -13,13 +13,18 @@ import store from "@/store";
 //global.requestAnimationFrame = cb => cb();
 
 describe("Movements Module", () => {
-  it("Initial movements", async () => {
-    const localVue = createLocalVue();
+  let localVue;
+  let vuetify;
+  let router;
 
+  beforeEach(() => {
+    localVue = createLocalVue();
     localVue.use(Vuex);
     localVue.use(Vuetify);
     localVue.use(VueRouter);
-    const router = new VueRouter({
+
+    vuetify = new Vuetify();
+    router = new VueRouter({
       routes: [
         {
           path: "/customAccount/:id",
@@ -28,9 +33,9 @@ describe("Movements Module", () => {
         }
       ]
     });
+  });
 
-    const vuetify = new Vuetify();
-
+  it("Find Index", async () => {
     const wrapper = shallowMount(CustomAccount, {
       store,
       vuetify,
@@ -38,17 +43,76 @@ describe("Movements Module", () => {
       router
     });
 
+    console.log("TEST -> Router push Enterprise");
+    wrapper.vm.$router.push({
+      name: "CustomAccount",
+      params: { id: "Enterprise" }
+    });
+
+    wrapper.vm.findAccountIndex();
+    const index = wrapper.vm.accountIndex;
+    const name = wrapper.vm.accountName;
+    console.log(`TEST-> IndexFound: ${index} AccountName: ${name}`);
+
+    const indexToFound = 2;
+    const foundIndex = wrapper.vm.accountIndex;
+    assert.equal(foundIndex, indexToFound);
+  });
+
+  it("Initial movements", async () => {
+    const wrapper = shallowMount(CustomAccount, {
+      store,
+      vuetify,
+      localVue,
+      router
+    });
+    //const accounts = wrapper.vm.accounts;
+    //console.log(`TEST -> Acounts: ${JSON.stringify(accounts)}`);
+    console.log("TEST -> Router push newName");
+    wrapper.vm.$router.push({
+      name: "CustomAccount",
+      params: { id: "newName" }
+    });
+    const index = wrapper.vm.accountIndex;
+    console.log(`TEST -> accountIndex: ${index}`);
+    const movements = wrapper.vm.info;
+    //console.log(`TEST -> Info: ${JSON.stringify(movements)}`);
+    assert.equal(movements.length, 4);
+  });
+
+  it("Delete movement", async () => {
+    global.alert = message => {
+      console.log(`ACCOUNT-> ${message}`);
+    };
+    global.confirm = () => true;
+    const wrapper = shallowMount(CustomAccount, {
+      store,
+      vuetify,
+      localVue,
+      router
+    });
+
+    console.log("TEST -> Router push clients");
     wrapper.vm.$router.push({
       name: "CustomAccount",
       params: { id: "Clients" }
     });
-    //const accounts = wrapper.vm.accounts;
     const movements = wrapper.vm.info;
 
-    /*console.log(JSON.stringify(accounts));
-    console.log(JSON.stringify(movements));*/
     assert.equal(movements.length, 4);
+    wrapper.vm.deleteMovement({
+      id: "1-3",
+      name: "Chair",
+      category: "other",
+      amount: "456",
+      type: "expense",
+      date: "2020-06-13"
+    });
+    await wrapper.vm.$forceUpdate();
+    const afterDelete = wrapper.vm.info;
+    assert.equal(afterDelete.length, 3);
   });
+
   /*it("Movement added", async () => {
     const localVue = createLocalVue();
 
@@ -94,92 +158,6 @@ describe("Movements Module", () => {
     //wrapper.vm.dispatchAction;
     //await wrapper.vm.$forceUpdate();
     /*console.log(`after: ${JSON.stringify(movementsList)}`);
-    assert.equal(movementsList.length, initialLength + 1);*/
-  //});
-  it("Delete movement", async () => {
-    const localVue = createLocalVue();
-
-    localVue.use(Vuex);
-    localVue.use(Vuetify);
-    localVue.use(VueRouter);
-    const router = new VueRouter({
-      routes: [
-        {
-          path: "/customAccount/:id",
-          name: "CustomAccount",
-          component: CustomAccount
-        }
-      ]
-    });
-
-    const vuetify = new Vuetify();
-    global.alert = message => {
-      console.log(message);
-    };
-    const wrapper = shallowMount(CustomAccount, {
-      store,
-      vuetify,
-      localVue,
-      router
-    });
-
-    wrapper.vm.$router.push({
-      name: "CustomAccount",
-      params: { id: "Clients" }
-    });
-    //const accounts = wrapper.vm.accounts;
-    const movements = wrapper.vm.info;
-
-    /*console.log(JSON.stringify(accounts));
-    console.log(JSON.stringify(movements));*/
-    assert.equal(movements.length, 4);
-    wrapper.vm.deleteMovement({
-      id: "1-3",
-      name: "Chair",
-      category: "other",
-      amount: "456",
-      type: "expense",
-      date: "2020-06-13"
-    });
-    await wrapper.vm.$forceUpdate();
-    const afterDelete = wrapper.vm.info;
-    assert.equal(afterDelete.length, 3);
-  });
-  it("Find Index", async () => {
-    const localVue = createLocalVue();
-
-    localVue.use(Vuex);
-    localVue.use(Vuetify);
-    localVue.use(VueRouter);
-    const router = new VueRouter({
-      routes: [
-        {
-          path: "/customAccount/:id",
-          name: "CustomAccount",
-          component: CustomAccount
-        }
-      ]
-    });
-
-    const vuetify = new Vuetify();
-    const wrapper = shallowMount(CustomAccount, {
-      store,
-      vuetify,
-      localVue,
-      router
-    });
-
-    const index = wrapper.vm.accountIndex;
-    console.log(index);
-
-    wrapper.vm.$router.push({
-      name: "CustomAccount",
-      params: { id: "Clients" }
-    });
-
-    wrapper.vm.findAccountIndex;
-    const indexToFound = 1;
-    const foundIndex = wrapper.vm.accountIndex;
-    assert.equal(foundIndex, indexToFound);
-  });
+    assert.equal(movementsList.length, initialLength + 1);
+  });*/
 });

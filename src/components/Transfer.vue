@@ -1,74 +1,75 @@
 <template>
-  <v-dialog v-model="dialog2" persistent max-width="600px">
-    <v-card>
-      <v-card-title>
-        <span id="title" class="headline">Transfer</span>
-      </v-card-title>
-      <v-card-text>
-        <v-container>
-          <v-form ref="form" v-model="valid" lazy-validation>
-            <v-row>
-              <v-col cols="12">
-                <h3>Cuenta de Débito</h3>
-                <v-divider></v-divider>
-                <!--cuenta dueño-->
-              </v-col>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="name"
-                  autocomplete="off"
-                  label="Name of the transfer"
-                  counter="20"
-                  :rules="rules.nameRules"
-                ></v-text-field>
-              </v-col>
+  <div>
+    <v-dialog v-model="dialog2" persistent max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span id="title" class="headline">Transfer</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-form ref="form" v-model="valid" lazy-validation>
+              <v-row>
+                <v-col cols="12">
+                  <h3>Cuenta de Débito</h3>
+                  <v-divider></v-divider>
+                  <!--cuenta dueño-->
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="name"
+                    autocomplete="off"
+                    label="Name of the transfer"
+                    counter="20"
+                    :rules="rules.nameRules"
+                  ></v-text-field>
+                </v-col>
 
-              <v-col cols="12">
-                <h3>Cuenta Abonado</h3>
-                <v-divider></v-divider>
-                <br />
+                <v-col cols="12">
+                  <h3>Cuenta Abonado</h3>
+                  <v-divider></v-divider>
+                  <br />
 
-                <v-select
-                  v-model="toaccount"
-                  :items="getAccounts"
-                  :rules="[v => !!v || 'Account is required']"
-                  label="Account"
-                  required
-                ></v-select>
-              </v-col>
+                  <v-select
+                    v-model="toaccount"
+                    :items="getAccounts"
+                    :rules="[v => !!v || 'Account is required']"
+                    label="Account"
+                    required
+                  ></v-select>
+                </v-col>
 
-              <v-col cols="12">
-                <v-text-field
-                  v-model.number="amount"
-                  label="Amount"
-                  prefix="$"
-                  counter="5"
-                  :rules="[
-                    minLength('Amount', 2),
-                    maxLength('Amount', 5),
-                    checkBudget()
-                  ]"
-                  min="1"
-                  max="100"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-form>
-        </v-container>
-      </v-card-text>
-      <v-card-actions>
-        <v-spacer></v-spacer>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model.number="amount"
+                    label="Amount"
+                    prefix="$"
+                    counter="5"
+                    :rules="[
+                      minLength('Amount', 2),
+                      maxLength('Amount', 5),
+                      checkBudget()
+                    ]"
+                    min="1"
+                    max="100"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
 
-        <v-btn color="warning" text @click="reset">Cancel</v-btn>
+          <v-btn color="warning" text @click="reset">Cancel</v-btn>
 
-        <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer"
-          >Save</v-btn
-        >
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+          <v-btn :disabled="!valid" color="sucess" text @click="submitTransfer"
+            >Save</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
-
 <script>
 import { mapGetters } from "vuex";
 
@@ -135,6 +136,16 @@ export default {
             date: this.getCurrentDate(),
             index: this.account
           });
+          this.$emit("addTransferToAnotherAccount", {
+            id: this.generateNewId(),
+            name: this.name,
+            category: this.generateCategory(),
+            amount: this.amount,
+            type: "income",
+            toaccount: this.toaccount,
+            date: this.getCurrentDate(),
+            index: this.getIndexAccount(this.toaccount)
+          });
           this.uploadMyAmount();
           this.uploadAmount();
           this.reset();
@@ -143,6 +154,11 @@ export default {
           return false;
         }
       }
+    },
+    getIndexAccount(name) {
+      let nt = this.accountsObject.findIndex(trans => trans.name === name);
+      console.log(nt);
+      return nt;
     },
 
     uploadMyAmount() {
@@ -203,8 +219,8 @@ export default {
       const dd = String(today.getDate()).padStart(2, "0");
       const mm = String(today.getMonth() + 1).padStart(2, "0");
       const yyyy = today.getFullYear();
-
-      return yyyy - mm - dd;
+      console.log(yyyy + "-" + mm + "-" + dd);
+      return yyyy + "-" + mm + "-" + dd;
     },
 
     reset() {

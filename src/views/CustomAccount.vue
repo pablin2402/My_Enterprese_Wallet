@@ -1,7 +1,7 @@
 <template>
   <div class="customAccount">
     <v-container class="my-10" grid-list-md>
-      <h1>Custom Account: {{ accountname }}</h1>
+      <h1>Custom Account: {{ accountName }}</h1>
       <h2>Saldo {{ budget }} Bs.</h2>
       <br />
       <v-layout row justify-space-around>
@@ -75,37 +75,39 @@
         v-for="data in filterList"
         :key="(data.categorieSelect, data.selectedDate)"
       >
-        <v-layout
-          row
-          wrap
-          justify-space-around
-          :class="`pa-3 data ${data.type}`"
-        >
-          <v-flex md3>
-            <div class="caption grey--text">Name</div>
-            <div class="movement-type">{{ data.name }}</div>
-          </v-flex>
-          <v-flex md3>
-            <div class="caption grey--text">Category</div>
-            <div>{{ data.category }}</div>
-          </v-flex>
-          <v-flex md2>
-            <div class="caption grey--text">Amount</div>
-            <div>{{ data.amount }} Bs.</div>
-          </v-flex>
-          <v-flex md2>
-            <v-btn small :type="data.type" @click="deleteMovement(data)">
-              <v-icon>mdi-trash-can-outline</v-icon>
-              <span>Delete</span>
-            </v-btn>
-          </v-flex>
-          <v-flex md2>
-            <v-btn small @click="sendData(data, false)">
-              <v-icon>mdi-pencil-outline</v-icon>
-              <span>Update</span>
-            </v-btn>
-          </v-flex>
-        </v-layout>
+        <div>
+          <v-layout
+            row
+            wrap
+            justify-space-around
+            :class="`pa-3 data ${data.type}`"
+          >
+            <v-flex md3>
+              <div class="caption grey--text">Name</div>
+              <div>{{ data.name }}</div>
+            </v-flex>
+            <v-flex md3>
+              <div class="caption grey--text">Category</div>
+              <div>{{ data.category }}</div>
+            </v-flex>
+            <v-flex md2>
+              <div class="caption grey--text">Amount</div>
+              <div>{{ data.amount }} Bs.</div>
+            </v-flex>
+            <v-flex md2>
+              <v-btn small :type="data.type" @click="deleteMovement(data)">
+                <v-icon>mdi-trash-can-outline</v-icon>
+                <span>Delete</span>
+              </v-btn>
+            </v-flex>
+            <v-flex md2>
+              <v-btn small @click="sendData(data, false)">
+                <v-icon>mdi-pencil-outline</v-icon>
+                <span>Update</span>
+              </v-btn>
+            </v-flex>
+          </v-layout>
+        </div>
       </v-card>
       <v-divider></v-divider>
       <Transfer
@@ -115,6 +117,7 @@
         :account="accountIndex"
         @close="dialog2 = false"
         @addTransfer="addTransfer"
+        @addTransferToAnotherAccount="addTransferToAnotherAccount"
       ></Transfer>
 
       <Movement
@@ -143,8 +146,8 @@ export default {
       selectedDate: null,
       dialog: false,
       dialog2: false,
-      accountname: "",
-      accountIndex: "",
+      accountName: "",
+      accountIndex: null,
       selectedMovement: {},
       newMovement: false,
       categorieSelect: "",
@@ -172,7 +175,6 @@ export default {
           categoriesArray.push([this.categoriesObject[i].name]);
         }
       }
-
       return categoriesArray;
     },
     categoriesList() {
@@ -192,17 +194,31 @@ export default {
     info() {
       //return this.accounts[this.accountIndex].info;
       if (this.$route.params.id) {
-        const accountname = this.$route.params.id;
-        const accountIndex = this.accounts.findIndex(
-          account => account.name === accountname
+        const accountName = this.$route.params.id;
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.accountIndex = this.accounts.findIndex(
+          account => account.name === accountName
         );
-        return this.accounts[accountIndex].info;
+        if (this.accountIndex !== -1) {
+          console.log(
+            `ACCOUNT-> Index found ${this.accountIndex} for ${accountName} this.accountIndex: ${this.accountIndex}`
+          );
+          return this.accounts[this.accountIndex].info;
+        } else {
+          console.log(
+            `ACCOUNT-> Index not found for ${accountName} this.accountIndex: ${this.accountIndex}`
+          );
+          return [];
+        }
       } else {
         return [];
       }
     },
     budget() {
       let currentBudget = 0;
+      if (this.dialog) {
+        console.log("ACCOUNT -> Updating budget");
+      }
       if (this.info.length !== 0) {
         this.info.forEach(movement => {
           if (movement.type === "income") {
@@ -212,13 +228,14 @@ export default {
           }
         });
         console.log(
-          `CalculatedBudget: ${currentBudget} for ${this.accountIndex}`
+          `ACCOUNT-> CalculatedBudget: ${currentBudget} for ${this.accountIndex}`
         );
         this.$store.dispatch("updateAccountBudget", {
           amount: currentBudget,
           index: this.accountIndex
         });
       }
+
       return currentBudget;
     },
     filterList() {
@@ -242,10 +259,14 @@ export default {
       this.$router.push("/categories");
     },
     findAccountIndex() {
+      console.log(`ACCOUNT-> FINDACCOUNTINDEX`);
       if (this.$route.params.id) {
-        this.accountname = this.$route.params.id;
+        this.accountName = this.$route.params.id;
         this.accountIndex = this.accounts.findIndex(
-          account => account.name === this.accountname
+          account => account.name === this.accountName
+        );
+        console.log(
+          `ACCOUNT->FINDACCOUNTINDEX-> Found index ${this.accountIndex} for ${this.accountName}`
         );
       }
     },
@@ -257,7 +278,7 @@ export default {
       this.dialog2 = true;
       this.newMovement = newMovement;
     },
-    ...mapActions(["addMovement"]),
+    ...mapActions(["addMovement", "addTransferTo"]),
 
     addTransfer(newAccount) {
       this.addMovement(newAccount, {
@@ -269,6 +290,19 @@ export default {
         toaccount: newAccount.toaccount,
         date: newAccount.date,
         index: newAccount.index
+      });
+    },
+    addTransferToAnotherAccount(newAccount) {
+      this.addTransferTo(newAccount, {
+        id: newAccount.id,
+        name: newAccount.name,
+        category: newAccount.category,
+        amount: newAccount.amount,
+        type: newAccount.type,
+        toaccount: newAccount.toaccount,
+        date: newAccount.date,
+        index: newAccount.index,
+        code: this.code
       });
     },
     sendData(selectedMovement, newMovement) {
@@ -284,23 +318,24 @@ export default {
       }
     },
     deleteMovement(deletedMovement) {
+      console.log(JSON.stringify(deletedMovement));
       if (
         deletedMovement.type === "income" &&
         this.budget - parseInt(deletedMovement.amount) < 0
       ) {
-        alert("You cant delete this income");
-      } else if (deletedMovement.type === "trasfer") {
+        alert("You cant delete this income, budget can't be lower tha 0");
+      } else if (deletedMovement.category === "transfer") {
         alert("You cant delete a transfer type movement");
       } else {
-        /*const response = confirm(
+        const response = confirm(
           `Are you sure you want to delete ${deletedMovement.name}`
         );
-        if (response) {*/
-        this.$store.dispatch("deleteMovement", {
-          ...deletedMovement,
-          index: this.accountIndex
-        });
-        //}
+        if (response) {
+          this.$store.dispatch("deleteMovement", {
+            ...deletedMovement,
+            index: this.accountIndex
+          });
+        }
       }
     },
     updateBudget() {

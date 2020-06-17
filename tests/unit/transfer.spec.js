@@ -9,7 +9,7 @@ import store from "@/store";
 import Home from "@/views/Home.vue";
 import CustomAccount from "@/views/CustomAccount.vue";
 
-describe("Transfer", () => {
+describe("TransferHome", () => {
   it("buttonDeleteandUpdateExists", () => {
     const localVue = createLocalVue();
     localVue.use(Vuex);
@@ -98,21 +98,55 @@ describe("Transfer", () => {
     assert.equal(wrapper.vm.accounts.length, expectedlength);
   });
   /*
-  it("Default transfer", () => {
+  it("Add transfer", async () => {
     const localVue = createLocalVue();
-    const expectedTitle = "Transfer";
+
     localVue.use(Vuex);
     localVue.use(Vuetify);
+    localVue.use(VueRouter);
+    const router = new VueRouter({
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
+    });
 
     const vuetify = new Vuetify();
-
-    const wrapper = mount(Transfer, {
+    global.alert = message => {
+      console.log(message);
+    };
+    const wrapper = shallowMount(CustomAccount, {
       store,
       vuetify,
-      localVue
+      localVue,
+      router
     });
-    const titleInComponent = wrapper.find("#title");
 
-    assert.equal(titleInComponent.text(), expectedTitle);
-  });*/
+    wrapper.vm.$router.push({
+      name: "CustomAccount",
+      params: { id: "Clients" }
+    });
+    const movements = wrapper.vm.info;
+    //console.log(JSON.stringify(accounts));
+    //console.log(JSON.stringify(movements));
+    assert.equal(movements.length, 4);
+    wrapper.vm.addTransfer({
+      id: "1-5",
+      name: "Tickets for the concert",
+      category: "transfer",
+      amount: "1000",
+      type: "expense",
+      toaccount: "Saving",
+      date: "2020-06-16",
+      index: 1
+    });
+    await wrapper.vm.$forceUpdate();
+    const afterAdd = wrapper.vm.info;
+    assert.equal(afterAdd.length, 5);
+
+  });
+  */
 });

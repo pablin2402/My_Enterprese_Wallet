@@ -77,6 +77,7 @@ export default {
     return {
       valid: false,
       initialMovementAmount: 0,
+      initialTypeIncome: false,
       required(propertyType) {
         return value =>
           (value && (value + "").length > 0) || `${propertyType} is required`;
@@ -100,10 +101,18 @@ export default {
           : this.accounts[this.selectedMovement.index].totalAmount;
         return value =>
           this.selectedMovement.type === "income" ||
-          value <= budget ||
-          (!this.newMovement && value <= budget + this.initialMovementAmount) ||
-          `Expense must be less than the remaining budget: ${budget +
-            this.initialMovementAmount}`;
+          (value <= budget && !this.initialTypeIncome) ||
+          (!this.newMovement &&
+            !this.initialTypeIncome &&
+            value <= budget + this.initialMovementAmount) ||
+          (!this.newMovement &&
+            this.initialTypeIncome &&
+            value <= budget - this.initialMovementAmount) ||
+          `Expense must be less than the remaining budget: ${
+            this.initialTypeIncome
+              ? budget - this.initialMovementAmount
+              : budget + this.initialMovementAmount
+          }`;
       },
       checkBudgetIncome() {
         const budget = !this.dialog
@@ -213,6 +222,7 @@ export default {
       this.selectedMovement.date = `${yyyy}-${mm}-${dd}`;
     },
     updateBudget() {
+      console.log("MOVEMENT -> Updating budget");
       let currentBudget = 0;
       this.info.forEach(movement => {
         if (movement.type === "income") {
@@ -221,6 +231,9 @@ export default {
           currentBudget -= parseInt(movement.amount);
         }
       });
+      console.log(
+        `MOVEMENT -> Budget: ${currentBudget} to ${this.selectedMovement.index}`
+      );
       this.$store.dispatch("updateAccountBudget", {
         amount: currentBudget,
         index: this.selectedMovement.index
@@ -236,6 +249,7 @@ export default {
     dialog(newValue) {
       if (newValue && !this.newMovement) {
         this.initialMovementAmount = parseInt(this.selectedMovement.amount);
+        this.initialTypeIncome = this.selectedMovement.type === "income";
       } else {
         this.initialMovementAmount = 0;
       }

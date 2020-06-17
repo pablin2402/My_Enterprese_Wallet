@@ -97,4 +97,56 @@ describe("TransferHome", () => {
     wrapper.vm.deleaccount("account-3");
     assert.equal(wrapper.vm.accounts.length, expectedlength);
   });
+  /*
+  it("Add transfer", async () => {
+    const localVue = createLocalVue();
+
+    localVue.use(Vuex);
+    localVue.use(Vuetify);
+    localVue.use(VueRouter);
+    const router = new VueRouter({
+      routes: [
+        {
+          path: "/customAccount/:id",
+          name: "CustomAccount",
+          component: CustomAccount
+        }
+      ]
+    });
+
+    const vuetify = new Vuetify();
+    global.alert = message => {
+      console.log(message);
+    };
+    const wrapper = shallowMount(CustomAccount, {
+      store,
+      vuetify,
+      localVue,
+      router
+    });
+
+    wrapper.vm.$router.push({
+      name: "CustomAccount",
+      params: { id: "Clients" }
+    });
+    const movements = wrapper.vm.info;
+    //console.log(JSON.stringify(accounts));
+    //console.log(JSON.stringify(movements));
+    assert.equal(movements.length, 4);
+    wrapper.vm.addTransfer({
+      id: "1-5",
+      name: "Tickets for the concert",
+      category: "transfer",
+      amount: "1000",
+      type: "expense",
+      toaccount: "Saving",
+      date: "2020-06-16",
+      index: 1
+    });
+    await wrapper.vm.$forceUpdate();
+    const afterAdd = wrapper.vm.info;
+    assert.equal(afterAdd.length, 5);
+
+  });
+  */
 });

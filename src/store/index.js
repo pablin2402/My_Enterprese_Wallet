@@ -9,7 +9,7 @@ export default new Vuex.Store({
       {
         code: "account-1",
         name: "Saving",
-        totalAmount: 0,
+        totalAmount: 346,
         info: [
           {
             id: "0-0",
@@ -48,7 +48,7 @@ export default new Vuex.Store({
       {
         code: "account-2",
         name: "Clients",
-        totalAmount: 0,
+        totalAmount: 9901,
         info: [
           {
             id: "1-0",
@@ -133,6 +133,9 @@ export default new Vuex.Store({
     },
     addMovementToOtherAccount({ commit }, newMovementToAccount) {
       commit("movementToOtherAccount", newMovementToAccount);
+    },
+    addTransferTo({ commit }, newMovementToAccount) {
+      commit("addTransferTo", newMovementToAccount);
     }
   },
 
@@ -146,6 +149,17 @@ export default new Vuex.Store({
         type: newMovementToAccount.type,
         toaccount: newMovementToAccount.toaccount,
         date: newMovementToAccount.date
+      });
+    },
+    addTransferTo(state, newer) {
+      state.accounts[newer.index].info.push({
+        id: newer.id,
+        name: newer.name,
+        category: newer.category,
+        amount: newer.amount,
+        type: newer.type,
+        toaccount: newer.toaccount,
+        date: newer.date
       });
     },
     addMovement(state, newMovement) {

@@ -134,6 +134,16 @@ export default {
             date: this.getCurrentDate(),
             index: this.account
           });
+          this.$emit("addTransferToAnotherAccount", {
+            id: this.generateNewId(),
+            name: this.name,
+            category: this.generateCategory(),
+            amount: this.amount,
+            type: "income",
+            toaccount: this.toaccount,
+            date: this.getCurrentDate(),
+            index: this.getIndexAccount(this.toaccount)
+          });
           this.uploadMyAmount();
           this.uploadAmount();
           this.reset();
@@ -142,6 +152,11 @@ export default {
           return false;
         }
       }
+    },
+    getIndexAccount(name) {
+      let nt = this.accountsObject.findIndex(trans => trans.name === name);
+      console.log(nt);
+      return nt;
     },
 
     uploadMyAmount() {

@@ -192,7 +192,6 @@ export default {
       return infoArray;
     },
     info() {
-      //return this.accounts[this.accountIndex].info;
       if (this.$route.params.id) {
         const accountName = this.$route.params.id;
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
@@ -200,14 +199,8 @@ export default {
           account => account.name === accountName
         );
         if (this.accountIndex !== -1) {
-          console.log(
-            `ACCOUNT-> Index found ${this.accountIndex} for ${accountName} this.accountIndex: ${this.accountIndex}`
-          );
           return this.accounts[this.accountIndex].info;
         } else {
-          console.log(
-            `ACCOUNT-> Index not found for ${accountName} this.accountIndex: ${this.accountIndex}`
-          );
           return [];
         }
       } else {
@@ -217,7 +210,7 @@ export default {
     budget() {
       let currentBudget = 0;
       if (this.dialog) {
-        console.log("ACCOUNT -> Updating budget");
+        // Refresh budget
       }
       if (this.info.length !== 0) {
         this.info.forEach(movement => {
@@ -227,9 +220,6 @@ export default {
             currentBudget -= parseInt(movement.amount);
           }
         });
-        console.log(
-          `ACCOUNT-> CalculatedBudget: ${currentBudget} for ${this.accountIndex}`
-        );
         this.$store.dispatch("updateAccountBudget", {
           amount: currentBudget,
           index: this.accountIndex
@@ -259,14 +249,10 @@ export default {
       this.$router.push("/categories");
     },
     findAccountIndex() {
-      console.log(`ACCOUNT-> FINDACCOUNTINDEX`);
       if (this.$route.params.id) {
         this.accountName = this.$route.params.id;
         this.accountIndex = this.accounts.findIndex(
           account => account.name === this.accountName
-        );
-        console.log(
-          `ACCOUNT->FINDACCOUNTINDEX-> Found index ${this.accountIndex} for ${this.accountName}`
         );
       }
     },
@@ -318,7 +304,6 @@ export default {
       }
     },
     deleteMovement(deletedMovement) {
-      console.log(JSON.stringify(deletedMovement));
       if (
         deletedMovement.type === "income" &&
         this.budget - parseInt(deletedMovement.amount) < 0

@@ -222,7 +222,6 @@ export default {
       this.selectedMovement.date = `${yyyy}-${mm}-${dd}`;
     },
     updateBudget() {
-      console.log("MOVEMENT -> Updating budget");
       let currentBudget = 0;
       this.info.forEach(movement => {
         if (movement.type === "income") {
@@ -231,9 +230,6 @@ export default {
           currentBudget -= parseInt(movement.amount);
         }
       });
-      console.log(
-        `MOVEMENT -> Budget: ${currentBudget} to ${this.selectedMovement.index}`
-      );
       this.$store.dispatch("updateAccountBudget", {
         amount: currentBudget,
         index: this.selectedMovement.index

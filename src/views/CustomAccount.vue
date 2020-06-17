@@ -214,6 +214,9 @@ export default {
     },
     budget() {
       let currentBudget = 0;
+      if (this.dialog) {
+        console.log("ACCOUNT -> Updating budget");
+      }
       if (this.info.length !== 0) {
         this.info.forEach(movement => {
           if (movement.type === "income") {
@@ -230,6 +233,7 @@ export default {
           index: this.accountIndex
         });
       }
+
       return currentBudget;
     },
     filterList() {
@@ -321,12 +325,13 @@ export default {
       }
     },
     deleteMovement(deletedMovement) {
+      console.log(JSON.stringify(deletedMovement));
       if (
         deletedMovement.type === "income" &&
         this.budget - parseInt(deletedMovement.amount) < 0
       ) {
-        alert("You cant delete this income");
-      } else if (deletedMovement.type === "trasfer") {
+        alert("You cant delete this income, budget can't be lower tha 0");
+      } else if (deletedMovement.category === "transfer") {
         alert("You cant delete a transfer type movement");
       } else {
         const response = confirm(

@@ -245,9 +245,12 @@ export default new Vuex.Store({
       ].info.filter(account => account.id !== deletedMovement.id);
     },
     updateAccountBudget(state, updatedAmountObject) {
-      if (updatedAmountObject.index) {
+      console.log(
+        `STORE -> Updating IndexToUpdate: ${updatedAmountObject.index} ToUpdate: ${updatedAmountObject.amount}`
+      );
+      if (updatedAmountObject.index !== null) {
         console.log(
-          `index mutate: ${updatedAmountObject.index} amount: ${updatedAmountObject.amount}`
+          `STORE -> Index: ${updatedAmountObject.index} Updated: ${updatedAmountObject.amount}`
         );
         state.accounts[updatedAmountObject.index].totalAmount =
           updatedAmountObject.amount;

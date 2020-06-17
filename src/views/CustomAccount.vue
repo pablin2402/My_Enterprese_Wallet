@@ -55,15 +55,26 @@
               no-title
               @input="menu1 = true"
               v-model="selectedDate"
+              class="selectedDate_class"
             ></v-date-picker>
           </v-menu>
         </v-flex>
         <v-flex md3>
-          <v-select :items="categories" label="Filter by category"></v-select>
+          <v-select
+            :items="categories"
+            label="Filter by category"
+            v-model="categorieSelect"
+            class="categorieSelect_class"
+          ></v-select>
         </v-flex>
       </v-layout>
       <v-divider></v-divider>
-      <v-card color="#F2F2F2" flat v-for="data in info" :key="data.id">
+      <v-card
+        color="#F2F2F2"
+        flat
+        v-for="data in filterList"
+        :key="(data.categorieSelect, data.selectedDate)"
+      >
         <v-layout
           row
           wrap
@@ -133,9 +144,12 @@ export default {
       dialog: false,
       dialog2: false,
       accountname: "",
-      accountIndex: null,
+      accountIndex: "",
       selectedMovement: {},
-      newMovement: false
+      newMovement: false,
+      categorieSelect: "",
+      infoArray: [],
+      dateArray: []
     };
   },
   computed: {
@@ -160,6 +174,20 @@ export default {
       }
 
       return categoriesArray;
+    },
+    categoriesList() {
+      const infoArray = [];
+      let infoAccount = [];
+      infoAccount = this.accounts[this.accountIndex].info;
+      for (let i = 0; i < infoAccount.length; i++) {
+        if (
+          this.accounts[this.accountIndex].info[i].category ===
+          this.categorieSelect[0]
+        ) {
+          infoArray[i] = this.accounts[this.accountIndex].info[i];
+        }
+      }
+      return infoArray;
     },
     info() {
       //return this.accounts[this.accountIndex].info;
@@ -192,6 +220,21 @@ export default {
         });
       }
       return currentBudget;
+    },
+    filterList() {
+      let filtered =
+        this.categorieSelect[0] === undefined
+          ? this.info
+          : this.categoriesList.filter(item => {
+              return item.category === this.categorieSelect[0];
+            });
+      filtered =
+        this.selectedDate === null
+          ? filtered
+          : filtered.filter(item => {
+              return item.date === this.selectedDate;
+            });
+      return filtered;
     }
   },
   methods: {

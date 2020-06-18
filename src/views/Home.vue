@@ -4,27 +4,14 @@
       <h1 id="title">My Enterprise Wallet</h1>
       <br />
       <v-flex md1 class="pt-6">
-        <v-btn
-          small
-          depressed
-          color="#F2F2F2"
-          width="100px"
-          @click.stop="dialogCreate = true"
-        >
+        <v-btn small depressed color="#F2F2F2" width="100px" @click.stop="dialogCreate = true">
           <v-icon left small>mdi-plus-circle-outline</v-icon>
           <span class="caption text-lowercase">New Account</span>
         </v-btn>
       </v-flex>
       <br />
       <v-layout row wrap>
-        <v-flex
-          xs12
-          sm6
-          md4
-          lg3
-          v-for="(account, index) in accounts"
-          :key="index"
-        >
+        <v-flex xs12 sm6 md4 lg3 v-for="(account, index) in accounts" :key="index">
           <v-card class="mx-auto" max-width="330">
             <router-link
               :to="{
@@ -55,8 +42,7 @@
                   openDeleteDialog(account);
                   dialogDelete = true;
                 "
-                >Delete</v-btn
-              >
+              >Delete</v-btn>
               <v-btn
                 id="update"
                 text
@@ -64,33 +50,19 @@
                   openUpdateDialog(account);
                   dialogUpdate = true;
                 "
-                >Update</v-btn
-              >
+              >Update</v-btn>
             </v-card-actions>
           </v-card>
         </v-flex>
       </v-layout>
     </v-container>
-    <deleteAccountDialog
-      ref="deleteDialog"
-      v-model="dialogDelete"
-      @deleaccount="deleaccount"
-    />
-    <updateAccountDialog
-      ref="updateDialog"
-      v-model="dialogUpdate"
-      @updaaccount="updaaccount"
-    />
-    <createAccountDialog
-      ref="createDialog"
-      v-model="dialogCreate"
-      @creaaccount="creaaccount"
-    />
+    <deleteAccountDialog ref="deleteDialog" v-model="dialogDelete" @deleaccount="deleaccount" />
+    <updateAccountDialog ref="updateDialog" v-model="dialogUpdate" @updaaccount="updaaccount" />
+    <createAccountDialog ref="createDialog" v-model="dialogCreate" @creaaccount="creaaccount" />
   </div>
 </template>
 
 <script>
-//import Account from "./Account";
 import { mapActions, mapGetters } from "vuex";
 import deleteAccountDialog from "../components/DeleteAccountDialog.vue";
 import updateAccountDialog from "../components/UpdateAccountDialog.vue";

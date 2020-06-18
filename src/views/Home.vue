@@ -90,8 +90,11 @@
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+//import Account from "./Account";
+import { mapActions, mapGetters } from "vuex";
+import deleteAccountDialog from "../components/DeleteAccountDialog.vue";
+import updateAccountDialog from "../components/UpdateAccountDialog.vue";
+import createAccountDialog from "../components/CreateAccountDialog.vue";
 
 export default {
   name: "Home",

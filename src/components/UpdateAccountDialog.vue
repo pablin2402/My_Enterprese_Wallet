@@ -2,7 +2,7 @@
   <v-dialog v-model="show" persistent max-width="300px">
     <v-card>
       <v-card-title>
-        <span class="headline">Update account</span>
+        <span class="headline">Update Your account</span>
       </v-card-title>
       <v-col cols="12">
         <v-text-field v-model="name" label="New name" required></v-text-field>
